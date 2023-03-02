@@ -11,7 +11,7 @@ public class AuthorName
         if(name != null){
             this._AuthorName = name;
         } else {
-            throw new Exception("Author Name must not be empty");
+            throw new BusinessRuleValidationException("Error in Author Name","Author Name must not be empty");
         }
     }
 

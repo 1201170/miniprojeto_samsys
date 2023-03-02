@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace miniprojeto_samsys.Domain.Books
 {
-    public interface IAuthorRepository:IRepository<Book,BookIsbn>
+    public interface IBookRepository:IRepository<Book,BookIsbn>
     {
         Task<List<Book>> GetByNameAsync(String bookName);
         

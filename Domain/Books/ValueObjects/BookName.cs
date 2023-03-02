@@ -11,7 +11,7 @@ public class BookName
         if(name != null){
             this._BookName = name;
         } else {
-            throw new Exception("Book Name must not be empty");
+            throw new BusinessRuleValidationException("Error in Book Name","Book Name must not be empty");
         }
     }
 

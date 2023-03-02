@@ -15,6 +15,13 @@ public class BookIsbn : EntityId{
         return obj.ToString();
     }
 
+    public int AsInteger()
+    {
+        int obj = (int) base.ObjValue;
+        return obj;
+    }
+
+
     protected override object createFromString(string text)
     {
         return Int32.Parse(text);

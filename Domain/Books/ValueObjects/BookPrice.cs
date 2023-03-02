@@ -11,7 +11,7 @@ public class BookPrice
         if(price > 0.0){
             this._BookPrice = price;
         } else {
-            throw new Exception("Trying to destroy the economy but failed.");
+            throw new BusinessRuleValidationException("Error in book price","Trying to destroy the economy with a negative price but failed.");
         }
     }
 
