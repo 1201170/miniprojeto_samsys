@@ -7,6 +7,11 @@ public class BookPrice
 {
 
     public double _BookPrice {get; set;}
+
+    protected BookPrice (){
+        
+    }
+
     public BookPrice (double price) {
         if(price > 0.0){
             this._BookPrice = price;

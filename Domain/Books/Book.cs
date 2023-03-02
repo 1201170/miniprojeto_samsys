@@ -8,7 +8,8 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
 
     public BookName BookName {get; set;}
     public BookPrice BookPrice {get; set;}
-    public AuthorId BookAuthor {get; set;}
+    public AuthorId BookAuthorID {get; set;}
+    public Author Author {get; set;}
 
     protected Book (){
         
@@ -19,6 +20,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
         if (authorId.ToString() == null){
             throw new BusinessRuleValidationException("Error in book author","Every book must have an author");
         }
+        this.BookAuthorID = authorId;
         this.BookName = new BookName(name);
         this.BookPrice = new BookPrice(price);
     }

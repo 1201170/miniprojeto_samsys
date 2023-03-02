@@ -7,6 +7,11 @@ public class AuthorName
 {
 
     public String _AuthorName {get; set;}
+
+    protected AuthorName (){
+
+    }
+    
     public AuthorName (String name) {
         if(name != null){
             this._AuthorName = name;

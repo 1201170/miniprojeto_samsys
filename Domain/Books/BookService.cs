@@ -6,7 +6,7 @@ using miniprojeto_samsys.Domain.Books;
 using miniprojeto_samsys.Domain.Authors;
 using miniprojeto_samsys.Domain.Shared;
 
-namespace miniprojeto_samsys.Domain
+namespace miniprojeto_samsys.Domain.Books
 {
     public class BookService
     {
@@ -30,10 +30,21 @@ namespace miniprojeto_samsys.Domain
             var list = await this._repo.GetAllAsync();
 
             List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsInteger(), 
-                                    bookAuthor = book.BookAuthor.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
+                                    bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
 
             return listDTO;
         }
+
+        public async Task<BookDTO> GetByIdAsync (BookIsbn id){
+
+            var book = await this._repo.GetByIdAsync(id);
+
+            if (book == null)
+                return null;
+
+            return new BookDTO{bookIsbn = book.Id.AsInteger(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+        }
+
 
     }
 }
