@@ -1,3 +1,5 @@
+using System;
+
 namespace miniprojeto_samsys;
 
 public class WeatherForecast

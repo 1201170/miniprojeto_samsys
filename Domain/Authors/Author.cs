@@ -18,6 +18,6 @@ public class Author : Entity<AuthorId>, IAggregateRoot{
         this.AuthorName = new AuthorName(AuthorName);
     }
 
-    public ICollection<Book> Books {get; set;}
+    //public ICollection<Book> Books {get; set;}
 
 }

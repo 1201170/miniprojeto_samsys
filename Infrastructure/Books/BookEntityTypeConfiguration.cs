@@ -11,12 +11,12 @@ namespace miniprojeto_samsys.Infrastructure.Books
     {
         public void Configure(EntityTypeBuilder<Book> builder)
         {
-            builder.ToTable("book");
+            //builder.ToTable("book");
             builder.HasKey(b => b.Id);
-            builder.HasOne<Author>(b => b.Author).WithMany(a => a.Books).HasForeignKey(b => b.BookAuthorID);
-            //builder.OwnsOne(o => o.BookName);
-            builder.OwnsOne(b => b.BookName);
-            builder.OwnsOne(b => b.BookPrice);
+            //builder.HasOne<Author>(b => b.Author).WithMany(a => a.Books).HasForeignKey(b => b.BookAuthorID);
+            builder.OwnsOne(o => o.BookName);
+            //builder.OwnsOne(b => b.BookName);
+            builder.OwnsOne(o => o.BookPrice);
             //builder.Property<double>("BookPrice").HasColumnName("BookPrice").IsRequired();
 
         }

@@ -27,7 +27,15 @@ namespace miniprojeto_samsys.Domain.Books
         }
 
         public async Task<List<BookDTO>> GetAllAsync (){
+
+            Console.WriteLine("Fetching all books");
+
             var list = await this._repo.GetAllAsync();
+
+            Console.WriteLine();
+            Console.WriteLine("AAAAAA");
+            Console.WriteLine();
+
 
             List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsInteger(), 
                                     bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });

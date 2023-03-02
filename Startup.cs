@@ -29,7 +29,7 @@ namespace miniprojeto_samsys{
         {
 
             services.AddDbContext<DDDSample1DbContext>(opt =>
-                opt.UseInMemoryDatabase("DDDSample1DB")
+                opt.UseInMemoryDatabase("ProjectDB")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
 

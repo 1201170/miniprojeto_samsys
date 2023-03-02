@@ -11,9 +11,9 @@ namespace miniprojeto_samsys.Infrastructure.Authors
     {
         public void Configure(EntityTypeBuilder<Author> builder)
         {
-            builder.ToTable("author");
+            //builder.ToTable("author");
             builder.HasKey(a => a.Id);
-            builder.HasMany<Book>(a => a.Books).WithOne(b => b.Author).HasForeignKey(b => b.BookAuthorID);
+            //builder.HasMany<Book>(a => a.Books).WithOne(b => b.Author).HasForeignKey(b => b.BookAuthorID);
             //builder.Property<string>("AuthorName").HasColumnName("AuthorName").IsRequired();
             builder.OwnsOne(a => a.AuthorName);
         }

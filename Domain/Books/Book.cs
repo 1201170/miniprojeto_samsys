@@ -9,7 +9,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
     public BookName BookName {get; set;}
     public BookPrice BookPrice {get; set;}
     public AuthorId BookAuthorID {get; set;}
-    public Author Author {get; set;}
+    //public Author Author {get; set;}
 
     protected Book (){
         

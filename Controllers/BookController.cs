@@ -19,7 +19,7 @@ namespace miniprojeto_samsys.Controllers
             _service = service;
         }
 
-        // GET: api/Books
+        // GET: api/Book
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetAll()
         {
