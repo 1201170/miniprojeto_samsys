@@ -32,12 +32,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             var list = await this._repo.GetAllAsync();
 
-            Console.WriteLine();
-            Console.WriteLine("AAAAAA");
-            Console.WriteLine();
-
-
-            List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsInteger(), 
+            List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
                                     bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
 
             return listDTO;
@@ -45,13 +40,55 @@ namespace miniprojeto_samsys.Domain.Books
 
         public async Task<BookDTO> GetByIdAsync (BookIsbn id){
 
+            Console.WriteLine("Fetching book with id: "+id.AsString());
+
             var book = await this._repo.GetByIdAsync(id);
 
             if (book == null)
                 return null;
 
-            return new BookDTO{bookIsbn = book.Id.AsInteger(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
         }
+
+        public async Task<BookDTO> AddAsync(BookDTO dto){
+
+            Console.WriteLine("Adding book");
+            
+            await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+
+            var book = new Book(dto.bookIsbn, dto.bookName, dto.bookPrice, new AuthorId(dto.bookAuthor));
+
+            await this._repo.AddAsync(book);
+
+            await this._unitOfWork.CommitAsync();
+
+            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+        }
+
+        public async Task<BookDTO> DeleteAsync(BookIsbn id){
+
+            Console.WriteLine("Deleting book with id: "+id.AsString());
+
+            var book = await this._repo.GetByIdAsync(id); 
+
+            if (book == null)
+                return null;
+
+            this._repo.Remove(book);
+            await this._unitOfWork.CommitAsync();
+
+            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+
+        }
+
+        private async Task checkAuthorIdAsync(AuthorId authorId)
+        {
+           var author = await _repoAuthor.GetByIdAsync(authorId);
+           if (author == null)
+                throw new BusinessRuleValidationException("Invalid Author Id.");
+        }
+        
+
 
 
     }

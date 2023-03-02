@@ -7,23 +7,16 @@ namespace miniprojeto_samsys.Domain.Books;
 public class BookIsbn : EntityId{
 
     [JsonConstructor]
-    public BookIsbn (int code) : base(code){}
+    public BookIsbn (String value) : base(value){}
 
     public override string AsString()
     {
-        int obj = (int) base.ObjValue;
-        return obj.ToString();
-    }
-
-    public int AsInteger()
-    {
-        int obj = (int) base.ObjValue;
+        string obj = base.ObjValue.ToString();
         return obj;
     }
 
-
     protected override object createFromString(string text)
     {
-        return Int32.Parse(text);
+        return text;
     }
 }

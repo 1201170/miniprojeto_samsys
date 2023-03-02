@@ -4,49 +4,49 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using miniprojeto_samsys.Domain.Shared;
-using miniprojeto_samsys.Domain.Books;
+using miniprojeto_samsys.Domain.Authors;
 
 namespace miniprojeto_samsys.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : ControllerBase
+    public class AuthorController : ControllerBase
     {
-        private readonly BookService _service;
+        private readonly AuthorService _service;
 
-        public BookController(BookService service)
+        public AuthorController(AuthorService service)
         {
             _service = service;
         }
 
-        // GET: api/Book
+        // GET: api/Author
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
-        // GET: api/Books/id
+        // GET: api/Author/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDTO>> GetById(string id)
+        public async Task<ActionResult<AuthorDTO>> GetById(string id)
         {
-            var book = await _service.GetByIdAsync(new BookIsbn(id));
+            var author = await _service.GetByIdAsync(new AuthorId(id));
 
-            if (book == null){
+            if (author == null){
                 return NotFound();
             }
 
-            return book;
+            return author;
         }
         
         [HttpPost]
-        public async Task<ActionResult<BookDTO>> Create(BookDTO dto)
+        public async Task<ActionResult<AuthorDTO>> Create(CreatingAuthorDTO dto)
         {
             try
             {
-                var book = await _service.AddAsync(dto);
+                var author = await _service.AddAsync(dto);
 
-                return CreatedAtAction(nameof(GetById), new { id = book.bookIsbn }, book);
+                return CreatedAtAction(nameof(GetById), new { id = author.authorId }, author);
             }
             catch(BusinessRuleValidationException ex)
             {
@@ -56,16 +56,16 @@ namespace miniprojeto_samsys.Controllers
 
 
         [HttpDelete("{id}/hardDelete")]
-        public async Task<ActionResult<BookDTO>> HardDelete(string id)
+        public async Task<ActionResult<AuthorDTO>> HardDelete(string id)
         {
             try{
-                var book = await _service.DeleteAsync(new BookIsbn(id));
+                var author = await _service.DeleteAsync(id);
 
-                if (book == null){
+                if (author == null){
                     return NotFound();
                 }
 
-                return Ok(book);
+                return Ok(author);
             }
             catch(BusinessRuleValidationException ex)
             {

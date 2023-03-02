@@ -2,7 +2,7 @@ namespace miniprojeto_samsys.Domain.Books;
 
 public class BookDTO {
 
-    public int bookIsbn {get; set;}
+    public string bookIsbn {get; set;}
 
     public string bookAuthor {get; set;}
 
@@ -11,7 +11,7 @@ public class BookDTO {
     public double bookPrice {get; set;}
 
 
-    public BookDTO (int bookIsbn, string bookAuthor, string bookName, double bookPrice){
+    public BookDTO (string bookIsbn, string bookAuthor, string bookName, double bookPrice){
         this.bookIsbn = bookIsbn;
         this.bookAuthor = bookAuthor;
         this.bookName = bookName;

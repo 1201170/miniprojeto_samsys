@@ -15,7 +15,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
         
     }
 
-    public Book(int isbn, String name, double price, AuthorId authorId){
+    public Book(string isbn, String name, double price, AuthorId authorId){
         this.Id = new BookIsbn(isbn);
         if (authorId.ToString() == null){
             throw new BusinessRuleValidationException("Error in book author","Every book must have an author");
