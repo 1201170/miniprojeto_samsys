@@ -1,14 +1,22 @@
-import * as React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import BookList from './pages/BookList';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
+import { Layout } from './components/Layout';
+import './custom.css';
 
+export default class App extends React.Component {
+  static displayName = App.name;
 
-export default function App() {
-  return (
-    <div className="App">
-      <Routes>
-        <Route path="/book-list" element={<BookList />} />
-      </Routes>
-    </div>
-  );
+  render() {
+    return (
+      <Layout>
+        <Routes>
+          {AppRoutes.map((route, index) => {
+            const { element, ...rest } = route;
+            return <Route key={index} {...rest} element={element} />;
+          })}
+        </Routes>
+      </Layout>
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.css';
 import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -5,13 +6,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 
+//const baseUrl : any = document.getElementsByTagName('base')[0].getAttribute('href');
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter >
       <App />
     </BrowserRouter>
   </StrictMode>

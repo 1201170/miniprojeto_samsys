@@ -1,6 +1,6 @@
 import * as React from "react";
 import BookInterface from '../BookInterface'
-export default class BookComponent extends React.Component<BookInterface, {}> {
+export class BookComponent extends React.Component<BookInterface, {}> {
 constructor (props: BookInterface){
   super(props);
 }
@@ -10,7 +10,7 @@ render() {
       <h1>Book Component</h1>
         Isbn:  <b>{this.props.bookIsbn}</b>
         <br/>
-        Author: <b>{this.props.bookAuthor} years old</b>
+        Author: <b>{this.props.bookAuthor} </b>
         <br/>
         Name: <b>{this.props.bookName}</b>
         <br/>
