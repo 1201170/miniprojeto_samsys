@@ -1,4 +1,4 @@
-export default interface Book{
+export default interface BookInterface{
 
     bookIsbn : string;
     bookAuthor : string;

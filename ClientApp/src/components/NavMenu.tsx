@@ -36,7 +36,7 @@ export class NavMenu extends React.Component<{}, { collapsed: boolean }> {
                 <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/book">Book test</NavLink>
+                <NavLink tag={Link} className="text-dark" to="/book-list">Book List</NavLink>
               </NavItem>
             </ul>
           </Collapse>
