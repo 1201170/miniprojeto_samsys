@@ -7,6 +7,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Book } from '../Book';
+import TableHeader from './TableComponents/TableHeader';
+import TableContent from './TableComponents/TableContent';
 
 export default function BookTable() {
 
@@ -27,32 +29,6 @@ export default function BookTable() {
     }, []);
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Book ISBN</TableCell>
-            <TableCell align="right">Book Name</TableCell>
-            <TableCell align="right">Book Author</TableCell>
-            <TableCell align="right">Book Price</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {books.map((book) => (
-            <TableRow
-              key={book.bookIsbn}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {book.bookIsbn}
-              </TableCell>
-              <TableCell align="right">{book.bookName}</TableCell>
-              <TableCell align="right">{book.bookAuthor}</TableCell>
-              <TableCell align="right">{book.bookPrice}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <TableContent />
   );
 }
