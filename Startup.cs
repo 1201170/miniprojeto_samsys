@@ -32,6 +32,7 @@ namespace miniprojeto_samsys{
                 opt.UseInMemoryDatabase("ProjectDB")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
 
+            services.AddScoped<DDDSample1DbContext>();
 
             /*
             services.AddDbContext<DDDSample1DbContext>(opt =>
@@ -42,6 +43,7 @@ namespace miniprojeto_samsys{
             ConfigureMyServices(services);
 
             services.AddControllers().AddNewtonsoftJson();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,10 +74,14 @@ namespace miniprojeto_samsys{
             {
                 endpoints.MapControllers();
             });
-        }
+
+            Seed(app);
+
+            }
 
         public void ConfigureMyServices(IServiceCollection services)
         {
+
             services.AddTransient<IUnitOfWork,UnitOfWork>();
 
             services.AddTransient<IBookRepository,BookRepository>();
@@ -85,5 +91,34 @@ namespace miniprojeto_samsys{
             services.AddTransient<AuthorService>();
 
         }
+
+        public static void Seed(IApplicationBuilder app)
+            {
+                // Get an instance of the DbContext from the DI container
+
+                    var scope = app.ApplicationServices.CreateScope();
+                    var context = scope.ServiceProvider.GetService<DDDSample1DbContext>();
+
+                    // perform database delete
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+
+                    //... perform other seed operations
+
+                    Author author1 = new Author("Autor1");
+                    Author author2 = new Author("Autor2");
+
+                    Book book1 = new Book("111","Livro1",25.00,author1.Id);
+                    Book book2 = new Book("222","Livro2",30.00,author1.Id);
+                    Book book3 = new Book("333","Livro3",45.99,author2.Id);
+
+                    context.AddRange(author1, author2, book1, book2, book3);
+
+                    context.SaveChanges();
+                    context.Dispose();
+
+
+                }
+
     }
 }
