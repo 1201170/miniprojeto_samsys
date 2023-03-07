@@ -49,30 +49,7 @@ export default function BookList () {
 
     updateAfterPost(values);
 
-      /*
-    // POST request using fetch inside useEffect React hook
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        "bookIsbn": values.bookIsbn,
-        "bookAuthor": values.bookAuthor,
-        "bookName": values.bookName,
-        "bookPrice": parseFloat(values.bookPrice.toString()),
-      }) // body data type must match "Content-Type" header
   };
-
-
-    const data = fetch('https://localhost:5001/api/book', requestOptions).
-    then((res) => {res.json()}).
-    then((data) => {tableData.push(data), setTableData([...tableData])});
-    //let newBook : Book = JSON.parse();
-    //tableData.push(newBook);
-    //setTableData([...tableData]);
-    */
-
-// empty dependency array means this effect will only run once (like componentDidMount in classes)
-};
 
   async function updateAfterPost(val: Book) : Promise<any> {
 
@@ -104,12 +81,15 @@ export default function BookList () {
   const handleDeleteRow = useCallback(
     (row: MRT_Row<Book>) => {
       if (
-        !window.confirm(`Are you sure you want to delete ${row.getValue('bookIsbn')}`)
+        !window.confirm(`Are you sure you want to delete book with ISBN: ${row.getValue('bookIsbn')} ?`)
       ) {
         return;
       }
       //send api delete request here, then refetch or update local table data for re-render
 
+      fetch("https://localhost:5001/api/book/"+row.getValue('bookIsbn')+"/hardDelete", {
+          method: "DELETE"
+      });
 
 
       tableData.splice(row.index, 1);
