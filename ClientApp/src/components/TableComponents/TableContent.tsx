@@ -1,4 +1,4 @@
-import { Table, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { Table, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TableSortLabel } from "@mui/material";
 import React from "react";
 import { Book } from "../../Book";
 import TableHeader from "./TableHeader";
@@ -70,7 +70,18 @@ export default function TableContent(){
         setOrderDirection(isAscending ? 'desc' : 'asc');
     }
 
+        
+    const handleChangePage = (event:any, newPage:any) => {
+        setPage(newPage);
+    }
+
+    const handleChangesRowsPerPage = (event:any) => {
+        setRowsPerPage(parseInt(event.target.value));
+        setPage(0);
+    }
+
     return (
+        <div>
             <TableContainer>
                 <Table>
                     <TableHeader 
@@ -81,6 +92,7 @@ export default function TableContent(){
                     {
                         sortedRowInformation(
                             book, getComparator(orderDirection, valueToOrderBy))
+                            .slice(page*rowsPerPage,page*rowsPerPage+rowsPerPage)
                             .map((b:any, index:any) => (
                                 <TableRow key={index}>
                                     <TableCell>
@@ -101,5 +113,14 @@ export default function TableContent(){
                     }
                 </Table>
             </TableContainer>
+                <TablePagination 
+                rowsPerPageOptions={[1,2,3]} 
+                count={book.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangesRowsPerPage}
+                />
+            </div>
     )
 }
