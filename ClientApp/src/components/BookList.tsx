@@ -3,6 +3,7 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_Cell,
   MRT_ColumnDef,
+  MRT_PaginationState,
   MRT_Row,
 } from 'material-react-table';
 import {
@@ -28,19 +29,46 @@ export default function BookList () {
     [cellIsbn: string]: string;
   }>({});
 
+  const [isError, setIsError] = useState(false);
+  //const [rowCount, setRowCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 1,
+    pageSize: 2,
+  });
+
+
   React.useEffect(() => {
       const api = async () => {
-      const data = await fetch("https://localhost:5001/api/book", {
-          method: "GET"
-      });
-      const jsonData = await data.json();
-      console.log(jsonData);
-      setTableData(jsonData);
+
+        if(!tableData.length){
+          setIsLoading(true);
+        } else {
+          setIsRefetching(true);
+        }
+
+        try{
+          const data = await fetch("https://localhost:5001/api/book/pageNumber="
+                                    +pagination.pageIndex+"&pageSize="+pagination.pageSize, {
+              method: "GET"
+          });
+
+          const jsonData = await data.json();
+          console.log(jsonData);
+          setTableData(jsonData);
+
+        } catch (error) {
+            setIsError(true);
+            console.error(error);
+            return;
+        }
+        setIsError(false);
+        setIsLoading(false);
+        setIsRefetching(false);  
       };
-
-
       api();
-  }, []);
+  }, [pagination.pageIndex,pagination.pageSize,]);
 
 
 
@@ -194,8 +222,18 @@ export default function BookList () {
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
+        manualPagination
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
+        onPaginationChange={setPagination}
+        muiToolbarAlertBannerProps={
+          isError
+            ? {
+                color: 'error',
+                children: 'Error loading data',
+              }
+            : undefined
+        }
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: 'flex', gap: '1rem' }}>
             <Tooltip arrow placement="left" title="Edit">
@@ -219,6 +257,12 @@ export default function BookList () {
             Add New Book
           </Button>
         )}
+        state={{
+          isLoading,
+          pagination,
+          showAlertBanner: isError,
+          showProgressBars: isRefetching,
+        }}  
       />
       <CreateNewBookModal
         columns={columns}
