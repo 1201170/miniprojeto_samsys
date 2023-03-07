@@ -38,6 +38,21 @@ namespace miniprojeto_samsys.Domain.Books
             return listDTO;
         }
 
+
+        public async Task<List<BookDTO>> GetBooksAsync (BookParameters bookParameters){
+
+            Console.WriteLine("Fetching books parameters are: Page Size: " +bookParameters.PageSize+ " | Page Number: "+ bookParameters.PageNumber);
+
+            var list = await this._repo.GetBooks(bookParameters);
+
+            List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
+                                    bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
+
+            return listDTO;
+        }
+
+
+
         public async Task<BookDTO> GetByIdAsync (BookIsbn id){
 
             Console.WriteLine("Fetching book with id: "+id.AsString());

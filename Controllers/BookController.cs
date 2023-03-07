@@ -36,8 +36,19 @@ namespace miniprojeto_samsys.Controllers
                 return NotFound();
             }
 
-            return book;
+            return Ok(book);
         }
+
+        [HttpGet("pageNumber={pageNumber}&pageSize={pageSize}")]
+        public async Task<ActionResult<BookDTO>> GetBooks(int pageNumber, int pageSize)
+        {
+            BookParameters bookParameters = new BookParameters(pageNumber, pageSize);
+
+            var books = await _service.GetBooksAsync(bookParameters);
+
+            return Ok(books);
+        }
+
         
         [HttpPost]
         public async Task<ActionResult<BookDTO>> Create(BookDTO dto)
