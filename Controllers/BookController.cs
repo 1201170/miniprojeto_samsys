@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using miniprojeto_samsys.Domain.Shared;
 using miniprojeto_samsys.Domain.Books;
+using Newtonsoft.Json;
 
 namespace miniprojeto_samsys.Controllers
 {
@@ -45,6 +46,20 @@ namespace miniprojeto_samsys.Controllers
             BookParameters bookParameters = new BookParameters(pageNumber, pageSize);
 
             var books = await _service.GetBooksAsync(bookParameters);
+
+            var metadata = new
+            {
+                books.TotalCount,
+                books.PageSize,
+                books.CurrentPage,
+                books.TotalPages,
+                books.HasNext,
+                books.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            Console.WriteLine("Rows fetched: "+books.TotalCount);
 
             return Ok(books);
         }

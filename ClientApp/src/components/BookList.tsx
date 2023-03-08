@@ -30,12 +30,12 @@ export default function BookList () {
   }>({});
 
   const [isError, setIsError] = useState(false);
-  //const [rowCount, setRowCount] = useState(0);
+  const [rowCount, setRowCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: 1,
-    pageSize: 2,
+    pageIndex: 0,
+    pageSize: 5,
   });
 
 
@@ -50,13 +50,16 @@ export default function BookList () {
 
         try{
           const data = await fetch("https://localhost:5001/api/book/pageNumber="
-                                    +pagination.pageIndex+"&pageSize="+pagination.pageSize, {
+                                    +(pagination.pageIndex+1)+"&pageSize="+pagination.pageSize, {
               method: "GET"
           });
 
           const jsonData = await data.json();
+          const paginationHeader = await data.headers.get("x-pagination");
+          const countRow = paginationHeader!==null ? JSON.parse(paginationHeader) : 0;
           console.log(jsonData);
           setTableData(jsonData);
+          setRowCount(countRow.TotalCount);
 
         } catch (error) {
             setIsError(true);
@@ -68,7 +71,7 @@ export default function BookList () {
         setIsRefetching(false);  
       };
       api();
-  }, [pagination.pageIndex,pagination.pageSize,]);
+  }, [pagination.pageIndex,pagination.pageSize]);
 
 
 
@@ -222,10 +225,15 @@ export default function BookList () {
         editingMode="modal" //default
         enableColumnOrdering
         enableEditing
+        enablePagination={true}
         manualPagination
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
+        muiTablePaginationProps={{
+          rowsPerPageOptions: [5, 10, 20],
+        }}
         onPaginationChange={setPagination}
+      
         muiToolbarAlertBannerProps={
           isError
             ? {
@@ -257,6 +265,7 @@ export default function BookList () {
             Add New Book
           </Button>
         )}
+        rowCount={rowCount}
         state={{
           isLoading,
           pagination,

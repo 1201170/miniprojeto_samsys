@@ -10,5 +10,7 @@ namespace miniprojeto_samsys.Domain.Books
         Task<List<Book>> GetByNameAsync(String bookName);
         Task<List<Book>> GetBooks(BookParameters bookParameters);
 
+        Task<int> GetBooksTotalCount();
+
     }
 }

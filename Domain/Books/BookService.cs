@@ -39,16 +39,21 @@ namespace miniprojeto_samsys.Domain.Books
         }
 
 
-        public async Task<List<BookDTO>> GetBooksAsync (BookParameters bookParameters){
+        public async Task<PagedList<BookDTO>> GetBooksAsync (BookParameters bookParameters){
 
             Console.WriteLine("Fetching books parameters are: Page Size: " +bookParameters.PageSize+ " | Page Number: "+ bookParameters.PageNumber);
 
             var list = await this._repo.GetBooks(bookParameters);
 
+            var numBooks = await this._repo.GetBooksTotalCount();
+
+            
             List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
                                     bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
 
-            return listDTO;
+            PagedList<BookDTO> pagedListDTO = new PagedList<BookDTO>(listDTO, numBooks, bookParameters.PageNumber, bookParameters.PageSize);
+
+            return pagedListDTO;
         }
 
 
@@ -102,9 +107,6 @@ namespace miniprojeto_samsys.Domain.Books
            if (author == null)
                 throw new BusinessRuleValidationException("Invalid Author Id.");
         }
-        
-
-
 
     }
 }

@@ -62,7 +62,10 @@ namespace miniprojeto_samsys{
             app.UseCors(x => x
             .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .WithExposedHeaders("X-Pagination"));
+
+
 
             app.UseHttpsRedirection();
 

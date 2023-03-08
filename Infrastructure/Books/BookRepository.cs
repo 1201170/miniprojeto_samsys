@@ -21,16 +21,28 @@ namespace miniprojeto_samsys.Infrastructure.Books
 
         public async Task<List<Book>> GetBooks(BookParameters bookParameters)
         {
+
             return await this._objs
             .OrderBy(b => b.Id)
             .Skip((bookParameters.PageNumber - 1) * bookParameters.PageSize)
             .Take(bookParameters.PageSize)
             .ToListAsync();
+
+
+            /*
+            return PagedList<Book>.ToPagedList(this._objs.OrderBy(on => on.Id),
+            bookParameters.PageNumber,
+            bookParameters.PageSize);
+            */
         }
 
         public Task<List<Book>> GetByNameAsync(string bookName)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> GetBooksTotalCount(){
+            return await this._objs.CountAsync();
         }
     }
 }
