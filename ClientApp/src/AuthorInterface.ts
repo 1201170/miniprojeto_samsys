@@ -1,6 +1,6 @@
 export default interface Author {
 
-    authorID : string;
+    authorId : string;
     authorName: string;
     
 }

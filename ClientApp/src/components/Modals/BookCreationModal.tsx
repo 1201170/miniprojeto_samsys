@@ -6,13 +6,27 @@ import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as Yup from 'yup'
 import { Book } from '../../Book';
+import { Author } from '../../Author';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 const defaultInputValues = {
     bookIsbn: '',
     bookName: '',
-    bookAuthor: '',
+    bookAuthor: "",
     bookPrice: 0
 };
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 
 interface CreateModalProps {
     onClose: () => void;
@@ -22,6 +36,8 @@ interface CreateModalProps {
 
 export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) => {
     const [values, setValues] = useState(defaultInputValues);
+    const [authorData, setAuthorData] = useState<Author[]>([]);
+
 
     const modalStyles = {
         inputFields: {
@@ -35,15 +51,13 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
         },
     };
 
-    //const isbnRegExp =;
-
     const validationSchema : any = Yup.object().shape({
         bookIsbn: Yup.string()
             .required('Book ISBN is required'),
         bookName: Yup.string()
             .required('Book Name is required'),
         bookAuthor: Yup.string()
-            .required('Author ID is required'),
+            .required('Author is required'),
         bookPrice: Yup.number()
             .required('Price is required')
             .positive('Price cannot be negative'),
@@ -61,23 +75,33 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
         setValues(value)
     };
 
-    /*
-    const handleSubmit = () => {
-        let book : Book = new Book(values.bookIsbn, values.bookAuthor, values.bookName, values.bookPrice);
-        onSubmit(book);
-        onClose();
-      };
-      */
-
     const addBook = (data:any) => {
         onSubmit(data);
         onClose();
     };
 
     
-
     useEffect(() => {
-        if (open) setValues(defaultInputValues);
+        if (open){ setValues(defaultInputValues)};
+
+        const api = async () => {
+
+            try{
+              const data = await fetch("https://localhost:5001/api/author", {
+                  method: "GET"
+              });
+    
+              const jsonData = await data.json();
+              console.log(jsonData);
+              setAuthorData(jsonData);
+    
+            } catch (error) {
+                console.error(error);
+                return;
+            }
+          };
+          api();    
+
     }, [open])
 
     const getContent = () => (
@@ -102,16 +126,30 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
                 value={values.bookName}
                 onChange={(event) => handleChange({ ...values, bookName: event.target.value })}
             />
-            <TextField
-                placeholder="Book Author"
-                label="Book Author"
+            <FormControl >
+                <InputLabel id="author-select-label">Book Author</InputLabel>
+                <Select
+                labelId="author-select-label"
+                id="author-select"
                 required
                 {...register('bookAuthor')}
                 error={errors.bookAuthor ? true : false}
-                helperText={errors.bookAuthor?.message?.toString()}
                 value={values.bookAuthor}
                 onChange={(event) => handleChange({ ...values, bookAuthor: event.target.value })}
-            />
+                autoWidth
+                label="Book Author"
+                MenuProps={MenuProps}
+                >
+                {authorData.map((author) => (
+                    <MenuItem
+                    key={author.authorId}
+                    value={author.authorId}
+                    >
+                    {author.authorName}
+                    </MenuItem>
+                ))}
+                </Select>
+            </FormControl>
             <TextField
                 placeholder="Book Price"
                 label="Book Price"
