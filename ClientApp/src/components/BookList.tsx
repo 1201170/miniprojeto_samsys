@@ -116,7 +116,7 @@ export default function BookList () {
       }
       //send api delete request here, then refetch or update local table data for re-render
 
-      fetch("https://localhost:5001/api/book/"+row.getValue('bookIsbn')+"/hardDelete", {
+      fetch("https://localhost:5001/api/book/"+row.getValue('bookIsbn')+"/softDelete", {
           method: "DELETE"
       });
 

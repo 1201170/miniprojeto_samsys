@@ -22,18 +22,19 @@ namespace miniprojeto_samsys.Infrastructure.Books
         public async Task<List<Book>> GetBooks(BookParameters bookParameters)
         {
 
-            return await this._objs
+            return await this._objs.Where(b => b.isActive)
             .OrderBy(b => b.Id)
             .Skip((bookParameters.PageNumber - 1) * bookParameters.PageSize)
             .Take(bookParameters.PageSize)
             .ToListAsync();
+        }
 
+        public async Task<Book> GetBookByIdAsync(BookIsbn id){
+            return await this._objs.Where(b => id.Equals(b.Id)).Where(b => b.isActive).FirstOrDefaultAsync();
+        }
 
-            /*
-            return PagedList<Book>.ToPagedList(this._objs.OrderBy(on => on.Id),
-            bookParameters.PageNumber,
-            bookParameters.PageSize);
-            */
+        public async Task<List<Book>> GetAllBooksAsync (){
+            return await this._objs.Where(b => b.isActive).ToListAsync();
         }
 
         public Task<List<Book>> GetByNameAsync(string bookName)
@@ -42,7 +43,11 @@ namespace miniprojeto_samsys.Infrastructure.Books
         }
 
         public async Task<int> GetBooksTotalCount(){
-            return await this._objs.CountAsync();
+            return await this._objs.Where(b => b.isActive).CountAsync();
+        }
+
+        public void SoftDeleteBook(Book book){
+            book.isActive=false;
         }
     }
 }

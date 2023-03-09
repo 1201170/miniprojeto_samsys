@@ -17,6 +17,7 @@ namespace miniprojeto_samsys.Infrastructure.Books
             builder.OwnsOne(o => o.BookName);
             //builder.OwnsOne(b => b.BookName);
             builder.OwnsOne(o => o.BookPrice);
+            builder.Property<bool>("isActive").HasColumnName("isActive");
             //builder.Property<double>("BookPrice").HasColumnName("BookPrice").IsRequired();
 
         }

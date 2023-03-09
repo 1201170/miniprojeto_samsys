@@ -99,5 +99,24 @@ namespace miniprojeto_samsys.Controllers
             }
         }
 
+        [HttpDelete("{id}/softDelete")]
+        public async Task<ActionResult<BookDTO>> SoftDelete(string id)
+        {
+            try{
+                var book = await _service.SoftDeleteAsync(new BookIsbn(id));
+
+                if (book == null){
+                    return NotFound();
+                }
+
+                return Ok(book);
+            }
+            catch(BusinessRuleValidationException ex)
+            {
+               return BadRequest(new {Message = ex.Message});
+            }
+        }
+
+
     }
 }

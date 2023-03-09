@@ -9,6 +9,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
     public BookName BookName {get; set;}
     public BookPrice BookPrice {get; set;}
     public AuthorId BookAuthorID {get; set;}
+    public Boolean isActive {get; set;}
     //public Author Author {get; set;}
 
     protected Book (){
@@ -23,6 +24,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
         this.BookAuthorID = authorId;
         this.BookName = new BookName(name);
         this.BookPrice = new BookPrice(price);
+        this.isActive = true;
     }
 
 }

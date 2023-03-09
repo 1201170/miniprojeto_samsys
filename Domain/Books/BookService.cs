@@ -30,7 +30,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             Console.WriteLine("Fetching all books");
 
-            var list = await this._repo.GetAllAsync();
+            var list = await this._repo.GetAllBooksAsync();
 
             List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
                                     bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
@@ -62,7 +62,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             Console.WriteLine("Fetching book with id: "+id.AsString());
 
-            var book = await this._repo.GetByIdAsync(id);
+            var book = await this._repo.GetBookByIdAsync(id);
 
             if (book == null)
                 return null;
@@ -99,6 +99,22 @@ namespace miniprojeto_samsys.Domain.Books
 
             return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
 
+        }
+
+
+        public async Task<BookDTO> SoftDeleteAsync(BookIsbn id){
+
+            Console.WriteLine("Soft Deleting book with id: "+id.AsString());
+
+            var book = await this._repo.GetByIdAsync(id); 
+
+            if (book == null)
+                return null;
+
+            this._repo.SoftDeleteBook(book);
+            await this._unitOfWork.CommitAsync();
+
+            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
         }
 
         private async Task checkAuthorIdAsync(AuthorId authorId)
