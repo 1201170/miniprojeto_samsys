@@ -80,6 +80,29 @@ namespace miniprojeto_samsys.Controllers
             }
         }
 
+        [HttpPut("{isbn}")]
+        public async Task<ActionResult<BookDTO>> Update(string isbn, BookDTO dto){
+            if (isbn != dto.bookIsbn)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var book = await _service.UpdateAsync(dto);
+                
+                if (book == null)
+                {
+                    return NotFound();
+                }
+                return Ok(book);
+            }
+            catch(BusinessRuleValidationException ex)
+            {
+                return BadRequest(new {Message = ex.Message});
+            }
+        }
+
 
         [HttpDelete("{id}/hardDelete")]
         public async Task<ActionResult<BookDTO>> HardDelete(string id)

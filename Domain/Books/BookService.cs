@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using miniprojeto_samsys.Domain.Books;
 using miniprojeto_samsys.Domain.Authors;
 using miniprojeto_samsys.Domain.Shared;
+using miniprojeto_samsys.Mappers;
 
 namespace miniprojeto_samsys.Domain.Books
 {
@@ -67,7 +68,7 @@ namespace miniprojeto_samsys.Domain.Books
             if (book == null)
                 return null;
 
-            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+            return BookToBookDTOMapper.ToBookDTOMap(book);
         }
 
         public async Task<BookDTO> AddAsync(BookDTO dto){
@@ -76,14 +77,32 @@ namespace miniprojeto_samsys.Domain.Books
             
             await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
 
-            var book = new Book(dto.bookIsbn, dto.bookName, dto.bookPrice, new AuthorId(dto.bookAuthor));
+            var book = BookToBookDTOMapper.ToBookMap(dto);
 
             await this._repo.AddAsync(book);
 
             await this._unitOfWork.CommitAsync();
 
-            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+            return BookToBookDTOMapper.ToBookDTOMap(book);
         }
+
+        public async Task<BookDTO> UpdateAsync(BookDTO dto)
+        {
+            Console.WriteLine("Entrei PUT");
+            await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+            var book = await this._repo.GetByIdAsync(new BookIsbn(dto.bookIsbn));
+
+            if (book == null)
+                return null;   
+            
+            book.ChangeBookName(new BookName(dto.bookName));
+            book.ChangeBookPrice(new BookPrice(dto.bookPrice));
+
+            await this._unitOfWork.CommitAsync();
+
+            return BookToBookDTOMapper.ToBookDTOMap(book);
+        }
+
 
         public async Task<BookDTO> DeleteAsync(BookIsbn id){
 
@@ -97,7 +116,7 @@ namespace miniprojeto_samsys.Domain.Books
             this._repo.Remove(book);
             await this._unitOfWork.CommitAsync();
 
-            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+            return BookToBookDTOMapper.ToBookDTOMap(book);
 
         }
 
@@ -114,7 +133,7 @@ namespace miniprojeto_samsys.Domain.Books
             this._repo.SoftDeleteBook(book);
             await this._unitOfWork.CommitAsync();
 
-            return new BookDTO{bookIsbn = book.Id.AsString(), bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice};
+            return BookToBookDTOMapper.ToBookDTOMap(book);
         }
 
         private async Task checkAuthorIdAsync(AuthorId authorId)

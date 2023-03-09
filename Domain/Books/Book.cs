@@ -26,5 +26,23 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
         this.BookPrice = new BookPrice(price);
         this.isActive = true;
     }
+    
+    public void ChangeBookName(BookName bookName)
+    {
+            
+            if (!this.isActive)
+                throw new BusinessRuleValidationException("It is not possible to change the name of an inactive product.");
+            
+            this.BookName = bookName;
+    }
+
+        public void ChangeBookPrice(BookPrice bookPrice)
+    {
+            
+            if (!this.isActive)
+                throw new BusinessRuleValidationException("It is not possible to change the price of an inactive product.");
+            
+            this.BookPrice = bookPrice;
+    }
 
 }

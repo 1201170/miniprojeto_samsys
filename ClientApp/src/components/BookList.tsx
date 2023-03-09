@@ -27,7 +27,7 @@ export default function BookList () {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState<Book[]>([]);
   const [validationErrors, setValidationErrors] = useState<{
-    [cellIsbn: string]: string;
+    [cellId: string]: string;
   }>({});
 
   const [isError, setIsError] = useState(false);
@@ -98,6 +98,7 @@ export default function BookList () {
       if (!Object.keys(validationErrors).length) {
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
+        //mandar o famoso put
         setActionFlick(!actionFlick);
         exitEditingMode(); //required to exit editing mode and close modal
       }
@@ -134,12 +135,17 @@ export default function BookList () {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          const isValid = validateIsbn(event.target.value);
+          const isValid =
+          cell.column.id === 'bookName'
+            ? validateName(event.target.value)
+            : cell.column.id === 'bookPrice'
+            ? validatePrice(+event.target.value)
+            : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
+              [cell.id]: `Error in ${cell.column.columnDef.header}`,
             });
           } else {
             //remove validation error for cell if valid
@@ -188,20 +194,6 @@ export default function BookList () {
           ...getCommonEditTextFieldProps(cell),
         }),
       },
-      /*
-      {
-        accessorKey: 'state',
-        header: 'State',
-        muiTableBodyCellEditTextFieldProps: {
-          select: true, //change to select for a dropdown
-          children: states.map((state) => (
-            <MenuItem key={state} value={state}>
-              {state}
-            </MenuItem>
-          )),
-        },
-      },
-      */
     ],
     [getCommonEditTextFieldProps],
   );
@@ -279,9 +271,13 @@ export default function BookList () {
   );
 };
 
+const validateRequired = (value: string) => !!value.length;
 
-const validateIsbn = (isbn: string) =>
-  (isbn.length < 9);
+const validateName = (bookName: string) =>
+  !!bookName.length;
+
+const validatePrice = (bookPrice: number) => bookPrice >= 0;
+
 
   function postBook(values: Book) : Promise<any> {
 
