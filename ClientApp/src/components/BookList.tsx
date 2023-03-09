@@ -33,6 +33,7 @@ export default function BookList () {
   const [rowCount, setRowCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
+  const [isT, setIsT] = useState(0);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -71,7 +72,7 @@ export default function BookList () {
         setIsRefetching(false);  
       };
       api();
-  }, [pagination.pageIndex,pagination.pageSize]);
+  }, [pagination.pageIndex,pagination.pageSize, isT]);
 
 
 
@@ -88,9 +89,11 @@ export default function BookList () {
 
     const resJson = await res.json();
 
-    let newBook : Book = JSON.parse(JSON.stringify(resJson));
-    tableData.push(newBook);
-    setTableData([...tableData]);
+    setIsT(isT+1);
+
+    //let newBook : Book = JSON.parse(JSON.stringify(resJson));
+    //tableData.push(newBook);
+    //setTableData([...tableData]);
 
   }
 
@@ -100,7 +103,8 @@ export default function BookList () {
       if (!Object.keys(validationErrors).length) {
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
-        setTableData([...tableData]);
+        setIsT(isT+1);
+        //setTableData([...tableData]);
         exitEditingMode(); //required to exit editing mode and close modal
       }
     };
@@ -121,6 +125,8 @@ export default function BookList () {
       fetch("https://localhost:5001/api/book/"+row.getValue('bookIsbn')+"/hardDelete", {
           method: "DELETE"
       });
+
+      setIsT(isT+1);
 
 
       tableData.splice(row.index, 1);
