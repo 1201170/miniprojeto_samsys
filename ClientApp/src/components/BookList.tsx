@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { Book } from '../Book';
+import {BookCreationModal} from './Modals/BookCreationModal';
 
 export default function BookList () {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -33,7 +34,7 @@ export default function BookList () {
   const [rowCount, setRowCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
-  const [isT, setIsT] = useState(0);
+  const [actionFlick, setActionFlick] = useState(false);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -72,7 +73,7 @@ export default function BookList () {
         setIsRefetching(false);  
       };
       api();
-  }, [pagination.pageIndex,pagination.pageSize, isT]);
+  }, [pagination.pageIndex,pagination.pageSize, actionFlick]);
 
 
 
@@ -87,13 +88,7 @@ export default function BookList () {
 
     const res = await postBook(val);
 
-    const resJson = await res.json();
-
-    setIsT(isT+1);
-
-    //let newBook : Book = JSON.parse(JSON.stringify(resJson));
-    //tableData.push(newBook);
-    //setTableData([...tableData]);
+    setActionFlick(!actionFlick);
 
   }
 
@@ -103,8 +98,7 @@ export default function BookList () {
       if (!Object.keys(validationErrors).length) {
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
-        setIsT(isT+1);
-        //setTableData([...tableData]);
+        setActionFlick(!actionFlick);
         exitEditingMode(); //required to exit editing mode and close modal
       }
     };
@@ -126,11 +120,8 @@ export default function BookList () {
           method: "DELETE"
       });
 
-      setIsT(isT+1);
+      setActionFlick(!actionFlick);
 
-
-      tableData.splice(row.index, 1);
-      setTableData([...tableData]);
     },
     [tableData],
   );
@@ -279,8 +270,7 @@ export default function BookList () {
           showProgressBars: isRefetching,
         }}  
       />
-      <CreateNewBookModal
-        columns={columns}
+      <BookCreationModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
@@ -289,69 +279,7 @@ export default function BookList () {
   );
 };
 
-interface CreateModalProps {
-  columns: MRT_ColumnDef<Book>[];
-  onClose: () => void;
-  onSubmit: (values: Book) => void;
-  open: boolean;
-}
 
-//example of creating a mui dialog modal for creating new rows
-export const CreateNewBookModal = ({
-  open,
-  columns,
-  onClose,
-  onSubmit,
-}: CreateModalProps) => {
-  const [values, setValues] = useState<any>(() =>
-    columns.reduce((book, column) => {
-      book[column.accessorKey ?? ''] = '';
-      return book;
-    }, {} as any),
-  );
-
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
-
-  return (
-    <Dialog open={open}>
-      <DialogTitle textAlign="center">Add New Book</DialogTitle>
-      <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <Stack
-            sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
-            }}
-          >
-            {columns.map((column) => (
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.accessorKey}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-              />
-            ))}
-          </Stack>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
-          Add New Book
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-const validateRequired = (value: string) => !!value.length;
 const validateIsbn = (isbn: string) =>
   (isbn.length < 9);
 

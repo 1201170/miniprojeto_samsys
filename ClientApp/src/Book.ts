@@ -7,7 +7,7 @@ export class Book implements BookInterface{
     bookName!: string;
     bookPrice!: number;
 
-    public Book(Isbn: string, Author: string, Name: string, Price: number){
+    constructor(Isbn: string, Author: string, Name: string, Price: number){
         this.bookIsbn = Isbn;
         this.bookAuthor = Author;
         this.bookName = Name;
