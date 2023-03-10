@@ -111,9 +111,9 @@ namespace miniprojeto_samsys{
                     Author author1 = new Author("Autor1");
                     Author author2 = new Author("Autor2");
 
-                    Book book1 = new Book("111","Livro1",25.00,author1.Id);
-                    Book book2 = new Book("222","Livro2",30.00,author1.Id);
-                    Book book3 = new Book("333","Livro3",45.99,author2.Id);
+                    Book book1 = new Book("111","Livro1","25.00",author1.Id);
+                    Book book2 = new Book("222","Livro2","30.00",author1.Id);
+                    Book book3 = new Book("333","Livro3","45.99",author2.Id);
 
                     context.AddRange(author1, author2, book1, book2, book3);
 

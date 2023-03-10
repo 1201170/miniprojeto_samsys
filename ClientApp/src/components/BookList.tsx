@@ -98,7 +98,23 @@ export default function BookList () {
       if (!Object.keys(validationErrors).length) {
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
-        //mandar o famoso put
+        console.log("val "+values.bookPrice);
+        console.log("row "+row.getValue('bookPrice'));
+
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            "bookIsbn": values.bookIsbn,
+            "bookAuthor": values.bookAuthor,
+            "bookName": values.bookName,
+            "bookPrice": parseFloat(values.bookPrice.toString()),
+          }) // body data type must match "Content-Type" header
+      };
+    
+        fetch('https://localhost:5001/api/book/'+row.getValue('bookIsbn'), requestOptions);
+    
+        
         setActionFlick(!actionFlick);
         exitEditingMode(); //required to exit editing mode and close modal
       }
@@ -276,7 +292,7 @@ const validateRequired = (value: string) => !!value.length;
 const validateName = (bookName: string) =>
   !!bookName.length;
 
-const validatePrice = (bookPrice: number) => bookPrice >= 0;
+const validatePrice = (bookPrice: number) => (bookPrice >= 0 && bookPrice.toString().match(/[0-9]+\.[0-9]{2}$/g));
 
 
   function postBook(values: Book) : Promise<any> {

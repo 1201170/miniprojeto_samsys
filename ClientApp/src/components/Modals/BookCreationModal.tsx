@@ -13,7 +13,7 @@ const defaultInputValues = {
     bookIsbn: '',
     bookName: '',
     bookAuthor: "",
-    bookPrice: 0
+    bookPrice: ""
 };
 
 const ITEM_HEIGHT = 48;
@@ -58,9 +58,9 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
             .required('Book Name is required'),
         bookAuthor: Yup.string()
             .required('Author is required'),
-        bookPrice: Yup.number()
+        bookPrice: Yup.string()
             .required('Price is required')
-            .positive('Price cannot be negative'),
+            .matches(/[0-9]+\.[0-9]{2}$/g,"Price must be positive or 0 and decimal places must be separeted by '.'"),
     });
 
     const {

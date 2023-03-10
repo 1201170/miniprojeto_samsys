@@ -8,10 +8,10 @@ public class BookDTO {
 
     public string bookName {get; set;}
 
-    public double bookPrice {get; set;}
+    public string bookPrice {get; set;}
 
 
-    public BookDTO (string bookIsbn, string bookAuthorID, string bookName, double bookPrice){
+    public BookDTO (string bookIsbn, string bookAuthorID, string bookName, string bookPrice){
         this.bookIsbn = bookIsbn;
         this.bookAuthor = bookAuthorID;
         this.bookName = bookName;

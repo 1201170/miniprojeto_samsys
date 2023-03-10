@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using miniprojeto_samsys.Domain.Shared;
 
 namespace miniprojeto_samsys.Domain.Books;
@@ -6,14 +8,17 @@ namespace miniprojeto_samsys.Domain.Books;
 public class BookPrice
 {
 
-    public double _BookPrice {get; set;}
+    public string _BookPrice {get; set;}
+
 
     protected BookPrice (){
         
     }
 
-    public BookPrice (double price) {
-        if(price > 0.0){
+    public BookPrice (string price) {
+        Match match = Regex.Match(price, @"[0-9]+\.[0-9]{2}$");
+
+        if(double.Parse(price, CultureInfo.InvariantCulture) > 0.0 && match.Success){
             this._BookPrice = price;
         } else {
             throw new BusinessRuleValidationException("Error in book price","Trying to destroy the economy with a negative price but failed.");
