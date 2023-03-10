@@ -11,7 +11,7 @@ const AppRoutes = [
   },
   {
     path: '/book',
-    element: <BookComponent bookIsbn={'111'} bookAuthor={'112'} bookName={'livro1'} bookPrice={29.9} />
+    element: <BookComponent bookIsbn={'111'} bookAuthor={'112'} bookName={'livro1'} bookPrice={'29.9'} />
   },
   {
     path: '/book-list',

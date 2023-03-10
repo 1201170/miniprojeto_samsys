@@ -60,7 +60,7 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
             .required('Author is required'),
         bookPrice: Yup.string()
             .required('Price is required')
-            .matches(/[0-9]+\.[0-9]{2}$/g,"Price must be positive or 0 and decimal places must be separeted by '.'"),
+            .matches(/^[0-9]+(\.[0-9]{2})?$/g,"Price must be positive or 0 and decimal places must be separeted by '.'"),
     });
 
     const {

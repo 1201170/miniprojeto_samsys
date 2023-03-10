@@ -108,7 +108,7 @@ export default function BookList () {
             "bookIsbn": values.bookIsbn,
             "bookAuthor": values.bookAuthor,
             "bookName": values.bookName,
-            "bookPrice": parseFloat(values.bookPrice.toString()),
+            "bookPrice": values.bookPrice,
           }) // body data type must match "Content-Type" header
       };
     
@@ -155,7 +155,7 @@ export default function BookList () {
           cell.column.id === 'bookName'
             ? validateName(event.target.value)
             : cell.column.id === 'bookPrice'
-            ? validatePrice(+event.target.value)
+            ? validatePrice(event.target.value)
             : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
@@ -292,7 +292,7 @@ const validateRequired = (value: string) => !!value.length;
 const validateName = (bookName: string) =>
   !!bookName.length;
 
-const validatePrice = (bookPrice: number) => (bookPrice >= 0 && bookPrice.toString().match(/[0-9]+\.[0-9]{2}$/g));
+const validatePrice = (bookPrice: string) => (parseFloat(bookPrice) >= 0 && bookPrice.toString().match(/^[0-9]+(\.[0-9]{2})?$/g));
 
 
   function postBook(values: Book) : Promise<any> {
@@ -304,7 +304,7 @@ const validatePrice = (bookPrice: number) => (bookPrice >= 0 && bookPrice.toStri
         "bookIsbn": values.bookIsbn,
         "bookAuthor": values.bookAuthor,
         "bookName": values.bookName,
-        "bookPrice": parseFloat(values.bookPrice.toString()),
+        "bookPrice": values.bookPrice,
       }) // body data type must match "Content-Type" header
   };
 

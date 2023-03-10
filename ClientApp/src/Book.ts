@@ -5,9 +5,9 @@ export class Book implements BookInterface{
     bookIsbn!: string;
     bookAuthor!: string;
     bookName!: string;
-    bookPrice!: number;
+    bookPrice!: string;
 
-    constructor(Isbn: string, Author: string, Name: string, Price: number){
+    constructor(Isbn: string, Author: string, Name: string, Price: string){
         this.bookIsbn = Isbn;
         this.bookAuthor = Author;
         this.bookName = Name;

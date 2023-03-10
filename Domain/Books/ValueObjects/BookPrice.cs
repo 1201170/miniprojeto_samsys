@@ -16,7 +16,7 @@ public class BookPrice
     }
 
     public BookPrice (string price) {
-        Match match = Regex.Match(price, @"[0-9]+\.[0-9]{2}$");
+        Match match = Regex.Match(price, @"^[0-9]+(\.[0-9]{2})?$");
 
         if(double.Parse(price, CultureInfo.InvariantCulture) > 0.0 && match.Success){
             this._BookPrice = price;
