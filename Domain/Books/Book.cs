@@ -10,7 +10,7 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
     public BookPrice BookPrice {get; set;}
     public AuthorId BookAuthorID {get; set;}
     public Boolean isActive {get; set;}
-    //public Author Author {get; set;}
+    public Author Author {get; set;}
 
     protected Book (){
         

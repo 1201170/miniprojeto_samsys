@@ -13,12 +13,10 @@ namespace miniprojeto_samsys.Infrastructure.Books
         {
             //builder.ToTable("book");
             builder.HasKey(b => b.Id);
-            //builder.HasOne<Author>(b => b.Author).WithMany(a => a.Books).HasForeignKey(b => b.BookAuthorID);
+            builder.HasOne(x => x.Author).WithMany(x => x.Books);
             builder.OwnsOne(o => o.BookName);
-            //builder.OwnsOne(b => b.BookName);
             builder.OwnsOne(o => o.BookPrice);
             builder.Property<bool>("isActive").HasColumnName("isActive");
-            //builder.Property<double>("BookPrice").HasColumnName("BookPrice").IsRequired();
 
         }
     }

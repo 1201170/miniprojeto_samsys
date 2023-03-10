@@ -63,7 +63,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             Console.WriteLine("Fetching book with id: "+id.AsString());
 
-            var book = await this._repo.GetBookByIdAsync(id);
+            Book book = await this._repo.GetBookByIdAsync(id);
 
             if (book == null)
                 return null;
