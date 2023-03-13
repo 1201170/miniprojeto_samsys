@@ -23,15 +23,29 @@ namespace miniprojeto_samsys.Infrastructure.Books
         {
 
             return await this._objs.Where(b => b.isActive)
+            .Include(b => b.Author)
             .OrderBy(b => b.Id)
             .Skip((bookParameters.PageNumber - 1) * bookParameters.PageSize)
             .Take(bookParameters.PageSize)
             .ToListAsync();
         }
 
-        public async Task<Book> GetBookByIdAsync(BookIsbn id){
-            return await this._objs.Where(b => id.Equals(b.Id)).Where(b => b.isActive).FirstOrDefaultAsync();
+    public async Task<Book> GetBookByIdAsync(BookIsbn id, bool includeAuthor = false)
+    {
+        if (includeAuthor)
+        {
+            return await this._objs
+                .Include(b => b.Author)
+                .Where(b => b.isActive)
+                .SingleOrDefaultAsync(b => b.Id == id);
         }
+        else
+        {
+            return await this._objs
+                .Where(b => b.isActive)
+                .SingleOrDefaultAsync(b => b.Id == id);
+        }
+    }
 
         public async Task<List<Book>> GetAllBooksAsync (){
             return await this._objs.Where(b => b.isActive).ToListAsync();

@@ -96,6 +96,7 @@ export default function BookList () {
   const handleSaveRowEdits: MaterialReactTableProps<Book>['onEditingRowSave'] =
     async ({ exitEditingMode, row, values }) => {
       if (!Object.keys(validationErrors).length) {
+        let authorID = tableData[row.index].bookAuthor;
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
         console.log("val "+values.bookPrice);
@@ -106,7 +107,7 @@ export default function BookList () {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             "bookIsbn": values.bookIsbn,
-            "bookAuthor": values.bookAuthor,
+            "bookAuthor": authorID,
             "bookName": values.bookName,
             "bookPrice": values.bookPrice,
           }) // body data type must match "Content-Type" header
@@ -195,7 +196,7 @@ export default function BookList () {
         }),
       },
       {
-        accessorKey: 'bookAuthor',
+        accessorKey: 'bookAuthorName',
         header: 'Book Author',
         enableEditing: false, //disable editing on this column
         size: 140,
@@ -205,7 +206,7 @@ export default function BookList () {
       },
       {
         accessorKey: 'bookPrice',
-        header: 'Price',
+        header: 'Price (€)',
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
         }),

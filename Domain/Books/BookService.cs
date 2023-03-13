@@ -40,7 +40,7 @@ namespace miniprojeto_samsys.Domain.Books
         }
 
 
-        public async Task<PagedList<BookDTO>> GetBooksAsync (BookParameters bookParameters){
+        public async Task<PagedList<BookDisplayDTO>> GetBooksAsync (BookParameters bookParameters){
 
             Console.WriteLine("Fetching books parameters are: Page Size: " +bookParameters.PageSize+ " | Page Number: "+ bookParameters.PageNumber);
 
@@ -49,10 +49,10 @@ namespace miniprojeto_samsys.Domain.Books
             var numBooks = await this._repo.GetBooksTotalCount();
 
             
-            List<BookDTO> listDTO = list.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
-                                    bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
+            List<BookDisplayDTO> listDTO = list.ConvertAll<BookDisplayDTO>(book => new BookDisplayDTO{bookIsbn = book.Id.AsString(), 
+                                    bookAuthor = book.BookAuthorID.AsString(), bookAuthorName=book.Author.AuthorName._AuthorName, bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
 
-            PagedList<BookDTO> pagedListDTO = new PagedList<BookDTO>(listDTO, numBooks, bookParameters.PageNumber, bookParameters.PageSize);
+            PagedList<BookDisplayDTO> pagedListDTO = new PagedList<BookDisplayDTO>(listDTO, numBooks, bookParameters.PageNumber, bookParameters.PageSize);
 
             return pagedListDTO;
         }
@@ -63,10 +63,12 @@ namespace miniprojeto_samsys.Domain.Books
 
             Console.WriteLine("Fetching book with id: "+id.AsString());
 
-            Book book = await this._repo.GetBookByIdAsync(id);
+            Book book = await this._repo.GetBookByIdAsync(id, includeAuthor: true);
 
             if (book == null)
                 return null;
+
+            Console.WriteLine("Author "+ book.Author.AuthorName._AuthorName);
 
             return BookToBookDTOMapper.ToBookDTOMap(book);
         }
