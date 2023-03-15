@@ -10,6 +10,9 @@ import Author from '../../models/Author/Author';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { AuthorService } from '../../services/AuthorService';
 import Toast from '../../helpers/Toast';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const defaultInputValues = {
     bookIsbn: '',
@@ -159,7 +162,9 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
                 value={values.bookPrice}
                 onChange={(event) => handleChange({ ...values, bookPrice: event.target.value })}
             />
+            <ToastContainer />
         </Box>
+        
     );
     
     return (

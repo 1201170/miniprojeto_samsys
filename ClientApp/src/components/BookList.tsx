@@ -24,7 +24,9 @@ import {BookCreationModal} from './Modals/BookCreationModal';
 import Book from '../models/Book/Book';
 import { BookService } from '../services/BookService';
 import Toast from "../helpers/Toast";
+import { ToastContainer } from 'react-toastify';
 import BookCreationDTO from '../models/Book/BookCreationDTO';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function BookList () {
 
@@ -289,6 +291,7 @@ export default function BookList () {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
+      <ToastContainer />
     </>
   );
 };

@@ -172,15 +172,17 @@ namespace miniprojeto_samsys.Domain.Books
                 response.Obj = BookToBookDTOMapper.ToBookDTOMap(bookAdded);
                 response.Success = true;
 
+                await this._unitOfWork.CommitAsync();
+
+                return response;
+
             } catch (Exception ex){
 
                 response.Message = ex.Message;
                 response.Success = false;
+
+                return response;
             }
-
-            await this._unitOfWork.CommitAsync();
-
-            return response;
         }
 
         public async Task<MessagingHelper<BookDTO>> UpdateAsync(string isbn ,BookDTO dto)
@@ -212,12 +214,13 @@ namespace miniprojeto_samsys.Domain.Books
                 response.Obj = BookToBookDTOMapper.ToBookDTOMap(book);
                 response.Success = true;
 
+                await this._unitOfWork.CommitAsync();
+
+
             } catch (Exception ex){
                 response.Message = ex.Message;
                 response.Success = false;
             }
-
-            await this._unitOfWork.CommitAsync();
 
             return response;
         }
@@ -244,13 +247,15 @@ namespace miniprojeto_samsys.Domain.Books
 
             this._repo.Remove(book);
 
+            await this._unitOfWork.CommitAsync();
+
+
             } catch (Exception ex){
 
                 response.Message = ex.Message;
                 response.Success = false;
             }
 
-            await this._unitOfWork.CommitAsync();
 
             return response;
 
@@ -278,12 +283,13 @@ namespace miniprojeto_samsys.Domain.Books
 
             this._repo.SoftDeleteBook(book);
 
+            await this._unitOfWork.CommitAsync();
+
+
             } catch (Exception ex){
                 response.Message = ex.Message;
                 response.Success = false;
             }
-
-            await this._unitOfWork.CommitAsync();
 
             return response;
         }
