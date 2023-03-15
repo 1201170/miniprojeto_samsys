@@ -1,4 +1,4 @@
-export default interface BookInterface{
+export default interface BookCreationDTO{
 
     bookIsbn : string;
     bookAuthor : string;

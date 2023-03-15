@@ -19,39 +19,99 @@ namespace miniprojeto_samsys.Infrastructure.Books
            this._objs = context.Books;
         }
 
-        public async Task<List<Book>> GetBooks(BookParameters bookParameters)
+        public async Task<PaginatedList<Book>> GetBooks(BookParameters bookParameters)
         {
+            
+            var response = new PaginatedList<Book>();
 
-            return await this._objs.Where(b => b.isActive)
+            try{
+
+            var bookList = await this._objs.Where(b => b.isActive)
             .Include(b => b.Author)
             .OrderBy(b => b.Id)
             .Skip((bookParameters.PageNumber - 1) * bookParameters.PageSize)
             .Take(bookParameters.PageSize)
             .ToListAsync();
+
+            var totalRecords = await this.GetBooksTotalCount();
+            response.TotalRecords = totalRecords;
+
+            response.Items = bookList;
+            response.CurrentPage = bookParameters.PageNumber;
+            response.PageSize = bookParameters.PageSize;
+
+            response.Success = true;
+            response.Message = null;
+
+
+            } catch (Exception ex){
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
 
-    public async Task<Book> GetBookByIdAsync(BookIsbn id, bool includeAuthor = false)
+    public async Task<MessagingHelper<Book>> GetBookByIdAsync(BookIsbn id, bool includeAuthor = false)
     {
-        if (includeAuthor)
-        {
-            return await this._objs
-                .Include(b => b.Author)
-                .Where(b => b.isActive)
-                .SingleOrDefaultAsync(b => b.Id == id);
+
+        var response = new MessagingHelper<Book>();
+
+        try{
+
+            var book = new Book();
+
+            if (includeAuthor)
+            {
+                book = await this._objs
+                    .Include(b => b.Author)
+                    .Where(b => b.isActive)
+                    .SingleOrDefaultAsync(b => b.Id == id);
+            }
+            else
+            {
+                book = await this._objs
+                    .Where(b => b.isActive)
+                    .SingleOrDefaultAsync(b => b.Id == id);
+            }
+
+            response.Obj = book;
+            response.Success = true;
+            response.Message = null;
+
+
+        } catch (Exception ex){
+
+            response.Success = false;
+            response.Message = ex.Message;
         }
-        else
-        {
-            return await this._objs
-                .Where(b => b.isActive)
-                .SingleOrDefaultAsync(b => b.Id == id);
-        }
+
+        return response;
     }
 
-        public async Task<List<Book>> GetAllBooksAsync (){
-            return await this._objs.Where(b => b.isActive).ToListAsync();
+        public async Task<MessagingHelper<List<Book>>> GetAllBooksAsync (){
+
+            var response = new MessagingHelper<List<Book>>();
+
+            try{
+
+                var bookList = await this._objs.Where(b => b.isActive).ToListAsync();
+
+                response.Obj = bookList;
+                response.Success = true;
+                response.Message = null;
+
+            } catch (Exception ex) {
+
+                response.Success = false;
+                response.Message = ex.Message;
+
+            }
+
+            return response;
         }
 
-        public Task<List<Book>> GetByNameAsync(string bookName)
+        public Task<MessagingHelper<List<Book>>> GetByNameAsync(string bookName)
         {
             throw new NotImplementedException();
         }

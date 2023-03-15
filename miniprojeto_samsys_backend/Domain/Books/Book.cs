@@ -12,8 +12,8 @@ public class Book : Entity<BookIsbn>, IAggregateRoot{
     public Boolean isActive {get; set;}
     public Author Author {get; set;}
 
-    protected Book (){
-        
+    public Book(){
+
     }
 
     public Book(string isbn, String name, string price, AuthorId authorId){

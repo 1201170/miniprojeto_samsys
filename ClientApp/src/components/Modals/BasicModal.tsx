@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CommonButton from '../Buttons/CommonButton';
 import { modalStyles } from './styles';
-import { Book } from '../../Book';
+import Book from '../../models/Book/Book';
 
 interface CreateModalProps {
     onClose: () => void;

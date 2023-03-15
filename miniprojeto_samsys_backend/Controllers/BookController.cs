@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using miniprojeto_samsys.Domain.Shared;
 using miniprojeto_samsys.Domain.Books;
 using Newtonsoft.Json;
+using miniprojeto_samsys.Infrastructure;
 
 namespace miniprojeto_samsys.Controllers
 {
@@ -22,124 +23,55 @@ namespace miniprojeto_samsys.Controllers
 
         // GET: api/Book
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookDTO>>> GetAll()
+        public async Task<MessagingHelper<List<BookDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
 
         // GET: api/Books/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDTO>> GetById(string id)
+        public async Task<MessagingHelper<BookDTO>> GetById(string id)
         {
-            var book = await _service.GetByIdAsync(new BookIsbn(id));
-
-            if (book == null){
-                return NotFound();
-            }
-
-            return Ok(book);
+            return await _service.GetByIdAsync(new BookIsbn(id));
         }
 
         [HttpGet("pageNumber={pageNumber}&pageSize={pageSize}")]
-        public async Task<ActionResult<BookDTO>> GetBooks(int pageNumber, int pageSize)
+        public async Task<PaginatedList<BookDisplayDTO>> GetBooks(int pageNumber, int pageSize)
         {
             BookParameters bookParameters = new BookParameters(pageNumber, pageSize);
 
             var books = await _service.GetBooksAsync(bookParameters);
 
-            var metadata = new
-            {
-                books.TotalCount,
-                books.PageSize,
-                books.CurrentPage,
-                books.TotalPages,
-                books.HasNext,
-                books.HasPrevious
-            };
+            Console.WriteLine("Rows fetched: "+books.TotalRecords);
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            Console.WriteLine("Rows fetched: "+books.TotalCount);
-
-            return Ok(books);
+            return books;
         }
 
         
         [HttpPost]
-        public async Task<ActionResult<BookDTO>> Create(BookDTO dto)
+        public async Task<MessagingHelper<BookDTO>> Create(BookDTO dto)
         {
-            try
-            {
-                var book = await _service.AddAsync(dto);
 
-                return CreatedAtAction(nameof(GetById), new { id = book.bookIsbn }, book);
-            }
-            catch(BusinessRuleValidationException ex)
-            {
-                return BadRequest(new {Message = ex.Message});
-            }
+                return await _service.AddAsync(dto);
         }
 
         [HttpPut("{isbn}")]
-        public async Task<ActionResult<BookDTO>> Update(string isbn, BookDTO dto){
-            if (isbn != dto.bookIsbn)
-            {
-                return BadRequest();
-            }
+        public async Task<MessagingHelper<BookDTO>> Update(string isbn, BookDTO dto){
 
-            try
-            {
-                var book = await _service.UpdateAsync(dto);
-                
-                if (book == null)
-                {
-                    return NotFound();
-                }
-                return Ok(book);
-            }
-            catch(BusinessRuleValidationException ex)
-            {
-                return BadRequest(new {Message = ex.Message});
-            }
+                return await _service.UpdateAsync(isbn,dto);
         }
 
 
         [HttpDelete("{id}/hardDelete")]
-        public async Task<ActionResult<BookDTO>> HardDelete(string id)
+        public async Task<MessagingHelper<BookDTO>> HardDelete(string id)
         {
-            try{
-                var book = await _service.DeleteAsync(new BookIsbn(id));
-
-                if (book == null){
-                    return NotFound();
-                }
-
-                return Ok(book);
-            }
-            catch(BusinessRuleValidationException ex)
-            {
-               return BadRequest(new {Message = ex.Message});
-            }
+             return await _service.DeleteAsync(new BookIsbn(id));
         }
 
         [HttpDelete("{id}/softDelete")]
-        public async Task<ActionResult<BookDTO>> SoftDelete(string id)
+        public async Task<MessagingHelper<BookDTO>> SoftDelete(string id)
         {
-            try{
-                var book = await _service.SoftDeleteAsync(new BookIsbn(id));
-
-                if (book == null){
-                    return NotFound();
-                }
-
-                return Ok(book);
-            }
-            catch(BusinessRuleValidationException ex)
-            {
-               return BadRequest(new {Message = ex.Message});
-            }
+            return await _service.SoftDeleteAsync(new BookIsbn(id));
         }
-
-
     }
 }

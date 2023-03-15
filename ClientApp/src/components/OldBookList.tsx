@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Book } from '../Book';
+import Book from '../models/Book/Book';
 import TableHeader from './TableComponents/TableHeader';
 import TableContent from './TableComponents/TableContent';
 

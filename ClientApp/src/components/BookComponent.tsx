@@ -1,5 +1,5 @@
 import * as React from "react";
-import BookInterface from '../BookInterface'
+import BookInterface from '../models/Book/Book'
 export class BookComponent extends React.Component<BookInterface, {}> {
 constructor (props: BookInterface){
   super(props);

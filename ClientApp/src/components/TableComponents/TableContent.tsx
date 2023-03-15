@@ -1,6 +1,6 @@
 import { Table, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TableSortLabel } from "@mui/material";
 import React from "react";
-import { Book } from "../../Book";
+import Book from "../../models/Book/Book";
 import TableHeader from "./TableHeader";
 
 

@@ -20,10 +20,16 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import { Book } from '../Book';
 import {BookCreationModal} from './Modals/BookCreationModal';
+import Book from '../models/Book/Book';
+import { BookService } from '../services/BookService';
+import Toast from "../helpers/Toast";
+import BookCreationDTO from '../models/Book/BookCreationDTO';
 
 export default function BookList () {
+
+  const bookService = new BookService();
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState<Book[]>([]);
   const [validationErrors, setValidationErrors] = useState<{
@@ -50,24 +56,19 @@ export default function BookList () {
           setIsRefetching(true);
         }
 
-        try{
-          const data = await fetch("https://localhost:5001/api/book/pageNumber="
-                                    +(pagination.pageIndex+1)+"&pageSize="+pagination.pageSize, {
-              method: "GET"
-          });
+          var response = await bookService.GetBooks(pagination.pageIndex, pagination.pageSize);
 
-          const jsonData = await data.json();
-          const paginationHeader = await data.headers.get("x-pagination");
-          const countRow = paginationHeader!==null ? JSON.parse(paginationHeader) : 0;
-          console.log(jsonData);
-          setTableData(jsonData);
-          setRowCount(countRow.TotalCount);
-
-        } catch (error) {
+          if (response.success === false) {
+            setIsLoading(false);
             setIsError(true);
-            console.error(error);
+            Toast.Show("error", response.message);
             return;
-        }
+        }  
+
+          console.log(response.items);
+          setTableData(response.items);
+          setRowCount(response.totalPages);
+
         setIsError(false);
         setIsLoading(false);
         setIsRefetching(false);  
@@ -86,38 +87,41 @@ export default function BookList () {
 
   async function updateAfterPost(val: Book) : Promise<any> {
 
-    const res = await postBook(val);
+    const response = await bookService.CreateBook(val as BookCreationDTO);
 
+    if(!response.success){
+      Toast.Show("error", response.message);
+      return;
+    }
     setActionFlick(!actionFlick);
-
   }
 
 
   const handleSaveRowEdits: MaterialReactTableProps<Book>['onEditingRowSave'] =
     async ({ exitEditingMode, row, values }) => {
       if (!Object.keys(validationErrors).length) {
-        let authorID = tableData[row.index].bookAuthor;
+
+        let bookIsbn: string = values.bookIsbn;
+        let bookAuthor : string = tableData[row.index].bookAuthor;
+        let bookName : string = values.bookName;
+        let bookPrice : string = values.bookPrice;
+
         tableData[row.index] = values;
         //send/receive api updates here, then refetch or update local table data for re-render
         console.log("val "+values.bookPrice);
         console.log("row "+row.getValue('bookPrice'));
 
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            "bookIsbn": values.bookIsbn,
-            "bookAuthor": authorID,
-            "bookName": values.bookName,
-            "bookPrice": values.bookPrice,
-          }) // body data type must match "Content-Type" header
-      };
-    
-        fetch('https://localhost:5001/api/book/'+row.getValue('bookIsbn'), requestOptions);
-    
-        
-        setActionFlick(!actionFlick);
-        exitEditingMode(); //required to exit editing mode and close modal
+        const response = await bookService.Edit(
+          {bookIsbn, bookAuthor, bookName, bookPrice} as BookCreationDTO);
+
+        if(!response.success){
+          Toast.Show("error", response.message);
+          exitEditingMode();
+        } else {
+          setActionFlick(!actionFlick);
+          exitEditingMode(); //required to exit editing mode and close modal
+        }
+
       }
     };
 
@@ -125,8 +129,7 @@ export default function BookList () {
     setValidationErrors({});
   };
 
-  const handleDeleteRow = useCallback(
-    (row: MRT_Row<Book>) => {
+  async function handleDeleteRow (row: MRT_Row<Book>) {
       if (
         !window.confirm(`Are you sure you want to delete book with ISBN: ${row.getValue('bookIsbn')} ?`)
       ) {
@@ -134,15 +137,17 @@ export default function BookList () {
       }
       //send api delete request here, then refetch or update local table data for re-render
 
-      fetch("https://localhost:5001/api/book/"+row.getValue('bookIsbn')+"/softDelete", {
-          method: "DELETE"
-      });
+      const response = await bookService.Delete(row.getValue('bookIsbn'));
+
+      if (!response.success){
+        Toast.Show("error", response.message);
+        return;
+      }
 
       setActionFlick(!actionFlick);
+      return;
+    }
 
-    },
-    [tableData],
-  );
 
   const getCommonEditTextFieldProps = useCallback(
     (
@@ -294,23 +299,3 @@ const validateName = (bookName: string) =>
   !!bookName.length;
 
 const validatePrice = (bookPrice: string) => (parseFloat(bookPrice) >= 0 && bookPrice.toString().match(/^[0-9]+(\.[0-9]{2})?$/g));
-
-
-  function postBook(values: Book) : Promise<any> {
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        "bookIsbn": values.bookIsbn,
-        "bookAuthor": values.bookAuthor,
-        "bookName": values.bookName,
-        "bookPrice": values.bookPrice,
-      }) // body data type must match "Content-Type" header
-  };
-
-    const data = fetch('https://localhost:5001/api/book', requestOptions);
-
-    return data;
-
-  }

@@ -5,9 +5,11 @@ import TextField from '@mui/material/TextField';
 import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as Yup from 'yup'
-import { Book } from '../../Book';
-import { Author } from '../../Author';
+import Book from '../../models/Book/Book';
+import Author from '../../models/Author/Author';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { AuthorService } from '../../services/AuthorService';
+import Toast from '../../helpers/Toast';
 
 const defaultInputValues = {
     bookIsbn: '',
@@ -35,6 +37,7 @@ interface CreateModalProps {
   }
 
 export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) => {
+    const authorService = new AuthorService();
     const [values, setValues] = useState(defaultInputValues);
     const [authorData, setAuthorData] = useState<Author[]>([]);
 
@@ -86,19 +89,15 @@ export const BookCreationModal = ({open, onClose, onSubmit} : CreateModalProps) 
 
         const api = async () => {
 
-            try{
-              const data = await fetch("https://localhost:5001/api/author", {
-                  method: "GET"
-              });
+              const response = await authorService.GetAll();
+
+              if(!response.success){
+                Toast.Show("error", response.message);
+                return;    
+              }
     
-              const jsonData = await data.json();
-              console.log(jsonData);
-              setAuthorData(jsonData);
-    
-            } catch (error) {
-                console.error(error);
-                return;
-            }
+              setAuthorData(response.obj);
+
           };
           api();    
 

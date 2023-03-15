@@ -2,9 +2,9 @@ using System;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using miniprojeto_samsys.Domain.Books;
 using miniprojeto_samsys.Domain.Authors;
 using miniprojeto_samsys.Domain.Shared;
+using miniprojeto_samsys.Infrastructure;
 
 namespace miniprojeto_samsys.Domain.Authors
 {
@@ -23,15 +23,36 @@ namespace miniprojeto_samsys.Domain.Authors
             //ensure utility
         }
 
-        public async Task<List<AuthorDTO>> GetAllAsync (){
+        public async Task<MessagingHelper<List<AuthorDTO>>> GetAllAsync (){
 
             Console.WriteLine("Fetching all authors");
 
-            var list = await this._repo.GetAllAsync();
+            var response = new MessagingHelper<List<AuthorDTO>>();
 
-            List<AuthorDTO> listDTO = list.ConvertAll<AuthorDTO>(author => new AuthorDTO{authorId = author.Id.AsString(), 
+            try{
+
+                var responseRepository = await this._repo.GetAllAuthorsAsync();
+
+                if (!responseRepository.Success)
+                {
+                    response.Success = false;
+                    response.Message = "Erro ao obter a informação";
+                    return response;
+                }
+
+                List<AuthorDTO> listDTO = responseRepository.Obj.ConvertAll<AuthorDTO>(author => new AuthorDTO{authorId = author.Id.AsString(), 
                                     authorName = author.AuthorName._AuthorName});
-            return listDTO;
+
+                response.Obj = listDTO;
+                response.Success = true;
+
+            } catch (Exception ex){
+
+                response.Message = ex.Message;
+                response.Success = false;
+            }
+
+            return response;
         }
 
         public async Task<AuthorDTO> GetByIdAsync (AuthorId id){

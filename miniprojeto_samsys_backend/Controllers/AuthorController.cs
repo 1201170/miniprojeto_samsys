@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using miniprojeto_samsys.Domain.Shared;
 using miniprojeto_samsys.Domain.Authors;
+using miniprojeto_samsys.Infrastructure;
 
 namespace miniprojeto_samsys.Controllers
 {
@@ -21,7 +22,7 @@ namespace miniprojeto_samsys.Controllers
 
         // GET: api/Author
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
+        public async Task<MessagingHelper<List<AuthorDTO>>> GetAll()
         {
             return await _service.GetAllAsync();
         }
