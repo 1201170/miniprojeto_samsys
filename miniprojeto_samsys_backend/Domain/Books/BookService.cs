@@ -34,6 +34,7 @@ namespace miniprojeto_samsys.Domain.Books
             Console.WriteLine("Fetching all books");
 
             var response = new MessagingHelper<List<BookDTO>>();
+            string errorMessage = "Error occurred while obtaining data";
 
 
             try{
@@ -43,7 +44,7 @@ namespace miniprojeto_samsys.Domain.Books
                 if (!responseRepository.Success)
                 {
                     response.Success = false;
-                    response.Message = "Erro ao obter a informação";
+                    response.Message = errorMessage;
                     return response;
                 }
 
@@ -52,20 +53,25 @@ namespace miniprojeto_samsys.Domain.Books
 
                 response.Obj = listDTO;
                 response.Success = true;
+                return response;
+
 
             } catch (Exception ex){
 
-                response.Message = ex.Message;
+                response.Message = errorMessage;
                 response.Success = false;
+                return response;
+
             }
 
-            return response;
         }
 
 
         public async Task<PaginatedList<BookDisplayDTO>> GetBooksAsync (BookParameters bookParameters){
 
             var response = new PaginatedList<BookDisplayDTO>();
+            string errorMessage = "Error occurred while obtaining data";
+
 
             Console.WriteLine("Fetching books parameters are: Page Size: " +bookParameters.PageSize+ " | Page Number: "+ bookParameters.PageNumber);
 
@@ -91,7 +97,7 @@ namespace miniprojeto_samsys.Domain.Books
             if (!responseRepository.Success)
             {
                     response.Success = false;
-                    response.Message = "Erro ao obter a informação";
+                    response.Message = errorMessage;
                     return response;
             }
 
@@ -105,13 +111,15 @@ namespace miniprojeto_samsys.Domain.Books
             response.CurrentPage = responseRepository.CurrentPage;
             response.TotalRecords = responseRepository.TotalRecords;
             response.Success = true;
+            return response;
+
 
             } catch (Exception ex){
-                response.Message = ex.Message;
+                response.Message = errorMessage;
                 response.Success = false;
-            }
+                return response;
 
-            return response;
+            }
         }
 
 
@@ -122,6 +130,8 @@ namespace miniprojeto_samsys.Domain.Books
 
             var response = new MessagingHelper<BookDTO>();
 
+            string errorMessage = "Error occurred while obtaining data";
+
 
             try{
 
@@ -130,22 +140,24 @@ namespace miniprojeto_samsys.Domain.Books
                 if (!responseRepository.Success)
                 {
                     response.Success = false;
-                    response.Message = "Erro ao obter a informação";
+                    response.Message = errorMessage;
                     return response;
                 }
 
                 response.Obj = BookToBookDTOMapper.ToBookDTOMap(responseRepository.Obj);
                 response.Success = true;
+                return response;
+
 
             } catch (Exception ex){
-
                 
-                response.Message = ex.Message;
+                response.Message = errorMessage;
                 response.Success = false;
+                return response;
+
 
             }
 
-            return response;
         }
 
         public async Task<MessagingHelper<BookDTO>> AddAsync(BookDTO dto){
@@ -153,6 +165,9 @@ namespace miniprojeto_samsys.Domain.Books
             Console.WriteLine("Adding book");
 
             var response = new MessagingHelper<BookDTO>();
+
+            string errorMessage = "Error occured while adding book";
+
 
             try{
 
@@ -165,7 +180,7 @@ namespace miniprojeto_samsys.Domain.Books
                 if (bookAdded == null){
 
                     response.Success = false;
-                    response.Message = "Erro ao adicionar livro";
+                    response.Message = errorMessage;
                     return response;
                 }
 
@@ -178,7 +193,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             } catch (Exception ex){
 
-                response.Message = ex.Message;
+                response.Message = errorMessage;
                 response.Success = false;
 
                 return response;
@@ -191,11 +206,16 @@ namespace miniprojeto_samsys.Domain.Books
 
             var response = new MessagingHelper<BookDTO>();
 
+            string errorMessage = "ISBN does not match body request ISBN";
+            string errorMessage2 = "Error occured while changing book data";
+            string errorMessage3 = "Error occured while finding the book ISBN";
+
+
             try{
 
                 if(isbn != dto.bookIsbn){
                     response.Success = false;
-                    response.Message = "ISBN does not match body request ISBN";
+                    response.Message = errorMessage;
                     return response;
                 }
 
@@ -204,7 +224,7 @@ namespace miniprojeto_samsys.Domain.Books
 
                 if (book == null){
                     response.Success = false;
-                    response.Message = "Erro ao encontrar livro";
+                    response.Message = errorMessage3;
                     return response;
                 }
                 
@@ -215,20 +235,26 @@ namespace miniprojeto_samsys.Domain.Books
                 response.Success = true;
 
                 await this._unitOfWork.CommitAsync();
+                return response;
+
 
 
             } catch (Exception ex){
-                response.Message = ex.Message;
+                response.Message = errorMessage2;
                 response.Success = false;
+                return response;
+
             }
 
-            return response;
         }
 
 
         public async Task<MessagingHelper<BookDTO>> DeleteAsync(BookIsbn id){
 
             Console.WriteLine("Deleting book with id: "+id.AsString());
+
+            string errorMessage = "Error occured while finding the book ISBN";
+            string errorMessage2 = "Error occured while trying to delete book";
 
             var response = new MessagingHelper<BookDTO>();
 
@@ -238,7 +264,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             if (book == null){
                 response.Success = false;
-                response.Message = "Erro ao encontrar livro";
+                response.Message = errorMessage;
                 return response;
             }
 
@@ -248,16 +274,18 @@ namespace miniprojeto_samsys.Domain.Books
             this._repo.Remove(book);
 
             await this._unitOfWork.CommitAsync();
+            return response;
+
 
 
             } catch (Exception ex){
 
-                response.Message = ex.Message;
+                response.Message = errorMessage2;
                 response.Success = false;
+                return response;
+
             }
 
-
-            return response;
 
         }
 
@@ -265,6 +293,9 @@ namespace miniprojeto_samsys.Domain.Books
         public async Task<MessagingHelper<BookDTO>> SoftDeleteAsync(BookIsbn id){
 
             Console.WriteLine("Soft Deleting book with id: "+id.AsString());
+
+            string errorMessage = "Error occured while finding the book ISBN";
+            string errorMessage2 = "Error occured while trying to delete book";            
 
             var response = new MessagingHelper<BookDTO>();
 
@@ -274,7 +305,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             if (book == null){
                 response.Success = false;
-                response.Message = "Erro ao encontrar livro";
+                response.Message = errorMessage;
                 return response;
             }
 
@@ -284,14 +315,17 @@ namespace miniprojeto_samsys.Domain.Books
             this._repo.SoftDeleteBook(book);
 
             await this._unitOfWork.CommitAsync();
+            return response;
+
 
 
             } catch (Exception ex){
-                response.Message = ex.Message;
+                response.Message = errorMessage2;
                 response.Success = false;
+                return response;
+
             }
 
-            return response;
         }
 
         private async Task checkAuthorIdAsync(AuthorId authorId)

@@ -29,6 +29,8 @@ namespace miniprojeto_samsys.Domain.Authors
 
             var response = new MessagingHelper<List<AuthorDTO>>();
 
+            string errorMessage = "Error occured while obtain authors data";
+
             try{
 
                 var responseRepository = await this._repo.GetAllAuthorsAsync();
@@ -36,7 +38,7 @@ namespace miniprojeto_samsys.Domain.Authors
                 if (!responseRepository.Success)
                 {
                     response.Success = false;
-                    response.Message = "Erro ao obter a informação";
+                    response.Message = errorMessage;
                     return response;
                 }
 
@@ -45,14 +47,17 @@ namespace miniprojeto_samsys.Domain.Authors
 
                 response.Obj = listDTO;
                 response.Success = true;
+                return response;
+
 
             } catch (Exception ex){
 
-                response.Message = ex.Message;
+                response.Message = errorMessage;
                 response.Success = false;
+                return response;
+
             }
 
-            return response;
         }
 
         public async Task<AuthorDTO> GetByIdAsync (AuthorId id){
