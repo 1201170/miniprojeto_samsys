@@ -52,7 +52,7 @@ namespace miniprojeto_samsys.Domain.Authors
 
             } catch (Exception ex){
 
-                response.Message = errorMessage;
+                response.Message = errorMessage + ": " + ex;
                 response.Success = false;
                 return response;
 

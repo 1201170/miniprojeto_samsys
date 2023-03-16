@@ -69,7 +69,7 @@ export default function BookList () {
 
           console.log(response.items);
           setTableData(response.items);
-          setRowCount(response.totalPages);
+          setRowCount(response.totalRecords);
 
         setIsError(false);
         setIsLoading(false);

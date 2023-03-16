@@ -58,7 +58,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             } catch (Exception ex){
 
-                response.Message = errorMessage;
+                response.Message = errorMessage + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -115,7 +115,7 @@ namespace miniprojeto_samsys.Domain.Books
 
 
             } catch (Exception ex){
-                response.Message = errorMessage;
+                response.Message = errorMessage + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -151,7 +151,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             } catch (Exception ex){
                 
-                response.Message = errorMessage;
+                response.Message = errorMessage + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -167,11 +167,29 @@ namespace miniprojeto_samsys.Domain.Books
             var response = new MessagingHelper<BookDTO>();
 
             string errorMessage = "Error occured while adding book";
+            string errorMessage2 = "Book with specified ISBN already exists";
+            string errorMessage3 = "Could not find an author with specified ID";
+
 
 
             try{
 
-                await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+                var bookExists = await this._repo.GetByIdAsync(new BookIsbn(dto.bookIsbn));
+
+                if (bookExists!=null){
+                    response.Success = false;
+                    response.Message = errorMessage2;
+                    return response;
+                }
+
+                
+                var author = await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+
+                if(author == null){
+                    response.Success = false;
+                    response.Message = errorMessage3;
+                    return response;
+                }
 
                 var book = BookToBookDTOMapper.ToBookMap(dto);
 
@@ -193,7 +211,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             } catch (Exception ex){
 
-                response.Message = errorMessage;
+                response.Message = errorMessage + ": " + ex;
                 response.Success = false;
 
                 return response;
@@ -209,6 +227,8 @@ namespace miniprojeto_samsys.Domain.Books
             string errorMessage = "ISBN does not match body request ISBN";
             string errorMessage2 = "Error occured while changing book data";
             string errorMessage3 = "Error occured while finding the book ISBN";
+            string errorMessage4 = "Could not find an author with specified ID";
+
 
 
             try{
@@ -219,7 +239,14 @@ namespace miniprojeto_samsys.Domain.Books
                     return response;
                 }
 
-                await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+                var author = await checkAuthorIdAsync(new AuthorId(dto.bookAuthor));
+
+                if(author == null){
+                    response.Success = false;
+                    response.Message = errorMessage4;
+                    return response;
+                }
+
                 var book = await this._repo.GetByIdAsync(new BookIsbn(dto.bookIsbn));
 
                 if (book == null){
@@ -240,7 +267,7 @@ namespace miniprojeto_samsys.Domain.Books
 
 
             } catch (Exception ex){
-                response.Message = errorMessage2;
+                response.Message = errorMessage2 + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -280,7 +307,7 @@ namespace miniprojeto_samsys.Domain.Books
 
             } catch (Exception ex){
 
-                response.Message = errorMessage2;
+                response.Message = errorMessage2 + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -320,7 +347,7 @@ namespace miniprojeto_samsys.Domain.Books
 
 
             } catch (Exception ex){
-                response.Message = errorMessage2;
+                response.Message = errorMessage2 + ": " + ex;
                 response.Success = false;
                 return response;
 
@@ -328,11 +355,10 @@ namespace miniprojeto_samsys.Domain.Books
 
         }
 
-        private async Task checkAuthorIdAsync(AuthorId authorId)
+        private async Task<Author> checkAuthorIdAsync(AuthorId authorId)
         {
            var author = await _repoAuthor.GetByIdAsync(authorId);
-           if (author == null)
-                throw new BusinessRuleValidationException("Invalid Author Id.");
+           return author;
         }
 
     }
