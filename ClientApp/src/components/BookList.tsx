@@ -95,6 +95,8 @@ export default function BookList () {
       Toast.Show("error", response.message);
       return;
     }
+
+    Toast.Show("success", "Book Created Successfully");
     setActionFlick(!actionFlick);
   }
 
@@ -120,6 +122,7 @@ export default function BookList () {
           Toast.Show("error", response.message);
           exitEditingMode();
         } else {
+          Toast.Show("success", "Book Edited Successfully");
           setActionFlick(!actionFlick);
           exitEditingMode(); //required to exit editing mode and close modal
         }
@@ -146,6 +149,7 @@ export default function BookList () {
         return;
       }
 
+      Toast.Show("success", "Book Deleted Successfully");
       setActionFlick(!actionFlick);
       return;
     }
