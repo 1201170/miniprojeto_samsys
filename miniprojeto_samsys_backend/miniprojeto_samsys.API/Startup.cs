@@ -29,17 +29,18 @@ namespace miniprojeto_samsys.API{
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<DDDSample1DbContext>(opt =>
-                opt.UseInMemoryDatabase("ProjectDB")
-                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
-            services.AddScoped<DDDSample1DbContext>();
 
             /*
             services.AddDbContext<DDDSample1DbContext>(opt =>
-                opt.UseSqlServer(Configuration.GetConnectionString("Default"))
+                opt.UseInMemoryDatabase("ProjectDB")
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
             */
+
+            services.AddDbContext<DDDSample1DbContext>(opt =>
+                opt.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"),b => b.MigrationsAssembly("miniprojeto_samsys.API"))
+                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+
+            services.AddScoped<DDDSample1DbContext>();
 
             ConfigureMyServices(services);
 
