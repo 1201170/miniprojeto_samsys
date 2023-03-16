@@ -8,6 +8,7 @@ using miniprojeto_samsys.Infrastructure.Models.Authors;
 using miniprojeto_samsys.Infrastructure.Entities.Authors;
 using miniprojeto_samsys.Infrastructure.Interfaces.Services;
 using miniprojeto_samsys.DAL.Repositories.Shared;
+using AutoMapper;
 
 namespace miniprojeto_samsys.BLL.Services
 {
@@ -15,10 +16,13 @@ namespace miniprojeto_samsys.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorRepository _repo;
-        public AuthorService(IUnitOfWork unitOfWork, IAuthorRepository repo)
+        private readonly IMapper _mapper;
+
+        public AuthorService(IUnitOfWork unitOfWork, IAuthorRepository repo, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
+            this._mapper = mapper;
         }
 
         public AuthorService()
@@ -45,8 +49,7 @@ namespace miniprojeto_samsys.BLL.Services
                     return response;
                 }
 
-                List<AuthorDTO> listDTO = responseRepository.Obj.ConvertAll<AuthorDTO>(author => new AuthorDTO{authorId = author.Id.AsString(), 
-                                    authorName = author.AuthorName._AuthorName});
+                List<AuthorDTO> listDTO = responseRepository.Obj.ConvertAll<AuthorDTO>(author => this._mapper.Map<Author,AuthorDTO>(author));
 
                 response.Obj = listDTO;
                 response.Success = true;
@@ -72,7 +75,7 @@ namespace miniprojeto_samsys.BLL.Services
             if (author == null)
                 return null;
 
-            return new AuthorDTO{authorId = author.Id.AsString(), authorName = author.AuthorName._AuthorName};
+            return this._mapper.Map<Author,AuthorDTO>(author);
         }
 
         public async Task<AuthorDTO> AddAsync(CreatingAuthorDTO dto){
@@ -85,7 +88,7 @@ namespace miniprojeto_samsys.BLL.Services
 
             await this._unitOfWork.CommitAsync();
 
-            return new AuthorDTO{authorId = author.Id.AsString(), authorName = author.AuthorName._AuthorName};
+            return this._mapper.Map<Author,AuthorDTO>(author);
         }
 
         public async Task<AuthorDTO> DeleteAsync(string id){
@@ -100,7 +103,7 @@ namespace miniprojeto_samsys.BLL.Services
             this._repo.Remove(author);
             await this._unitOfWork.CommitAsync();
 
-            return new AuthorDTO{authorId = author.Id.AsString(), authorName = author.AuthorName._AuthorName};
+            return this._mapper.Map<Author,AuthorDTO>(author);
 
         }
 

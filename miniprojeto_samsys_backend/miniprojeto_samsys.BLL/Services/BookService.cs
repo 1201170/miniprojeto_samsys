@@ -10,6 +10,7 @@ using miniprojeto_samsys.Infrastructure.Entities.Authors;
 using miniprojeto_samsys.Infrastructure.Entities.Books;
 using miniprojeto_samsys.DAL.Repositories.Shared;
 using miniprojeto_samsys.BLL.Mappers;
+using AutoMapper;
 
 namespace miniprojeto_samsys.BLL.Services
 {
@@ -18,12 +19,14 @@ namespace miniprojeto_samsys.BLL.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBookRepository _repo;
         private readonly IAuthorRepository _repoAuthor;
+        private readonly IMapper _mapper;
 
-        public BookService(IUnitOfWork unitOfWork, IBookRepository repo, IAuthorRepository repoAuthor)
+        public BookService(IUnitOfWork unitOfWork, IBookRepository repo, IAuthorRepository repoAuthor, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._repo = repo;
             this._repoAuthor = repoAuthor;
+            this._mapper = mapper;
         }
 
         public BookService()
@@ -50,8 +53,7 @@ namespace miniprojeto_samsys.BLL.Services
                     return response;
                 }
 
-                List<BookDTO> listDTO = responseRepository.Obj.ConvertAll<BookDTO>(book => new BookDTO{bookIsbn = book.Id.AsString(), 
-                                    bookAuthor = book.BookAuthorID.AsString(), bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
+                List<BookDTO> listDTO = responseRepository.Obj.ConvertAll<BookDTO>(book => this._mapper.Map<Book, BookDTO>(book));
 
                 response.Obj = listDTO;
                 response.Success = true;
@@ -102,10 +104,8 @@ namespace miniprojeto_samsys.BLL.Services
                     response.Message = errorMessage;
                     return response;
             }
-
             
-            List<BookDisplayDTO> listDTO = responseRepository.Items.ConvertAll<BookDisplayDTO>(book => new BookDisplayDTO{bookIsbn = book.Id.AsString(), 
-                                    bookAuthor = book.BookAuthorID.AsString(), bookAuthorName=book.Author.AuthorName._AuthorName, bookName = book.BookName._BookName, bookPrice = book.BookPrice._BookPrice });
+            List<BookDisplayDTO> listDTO = responseRepository.Items.ConvertAll<BookDisplayDTO>(book => this._mapper.Map<Book, BookDisplayDTO>(book));
 
 
             response.Items = listDTO;
@@ -146,7 +146,7 @@ namespace miniprojeto_samsys.BLL.Services
                     return response;
                 }
 
-                response.Obj = BookToBookDTOMapper.ToBookDTOMap(responseRepository.Obj);
+                response.Obj = this._mapper.Map<Book,BookDTO>(responseRepository.Obj);
                 response.Success = true;
                 return response;
 
@@ -193,7 +193,14 @@ namespace miniprojeto_samsys.BLL.Services
                     return response;
                 }
 
-                var book = BookToBookDTOMapper.ToBookMap(dto);
+                var book = this._mapper.Map<BookDTO, Book>(dto);
+                book.isActive = true;
+
+                Console.WriteLine(book.Id.AsString());
+                Console.WriteLine(book.BookName._BookName);
+                Console.WriteLine(book.BookPrice._BookPrice);
+                Console.WriteLine(book.BookAuthorID.AsString());
+
 
                 var bookAdded = await this._repo.AddAsync(book);
 
@@ -204,7 +211,7 @@ namespace miniprojeto_samsys.BLL.Services
                     return response;
                 }
 
-                response.Obj = BookToBookDTOMapper.ToBookDTOMap(bookAdded);
+                response.Obj = this._mapper.Map<Book,BookDTO>(bookAdded);
                 response.Success = true;
 
                 await this._unitOfWork.CommitAsync();
@@ -260,7 +267,7 @@ namespace miniprojeto_samsys.BLL.Services
                 book.ChangeBookName(new BookName(dto.bookName));
                 book.ChangeBookPrice(new BookPrice(dto.bookPrice));
 
-                response.Obj = BookToBookDTOMapper.ToBookDTOMap(book);
+                response.Obj = this._mapper.Map<Book,BookDTO>(book);
                 response.Success = true;
 
                 await this._unitOfWork.CommitAsync();
@@ -297,7 +304,7 @@ namespace miniprojeto_samsys.BLL.Services
                 return response;
             }
 
-            response.Obj = BookToBookDTOMapper.ToBookDTOMap(book);
+            response.Obj = this._mapper.Map<Book,BookDTO>(book);
             response.Success = true;
 
             this._repo.Remove(book);
@@ -338,7 +345,7 @@ namespace miniprojeto_samsys.BLL.Services
                 return response;
             }
 
-            response.Obj = BookToBookDTOMapper.ToBookDTOMap(book);
+            response.Obj = this._mapper.Map<Book,BookDTO>(book);
             response.Success = true;
 
             this._repo.SoftDeleteBook(book);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using miniprojeto_samsys.DAL.Repositories.Shared;
@@ -30,7 +31,7 @@ namespace miniprojeto_samsys.DAL.Repositories.Authors
 
             try{
 
-                var authorList = await this._objs.ToListAsync();
+                var authorList = await this._objs.OrderBy(a => a.AuthorName._AuthorName).ToListAsync();
 
                 response.Obj = authorList;
                 response.Success = true;

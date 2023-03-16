@@ -14,6 +14,8 @@ using miniprojeto_samsys.DAL.Repositories.Books;
 using miniprojeto_samsys.DAL.Repositories.Authors;
 using miniprojeto_samsys.Infrastructure.Entities.Authors;
 using miniprojeto_samsys.Infrastructure.Entities.Books;
+using miniprojeto_samsys.Infrastructure.Interfaces.Services;
+using miniprojeto_samsys.BLL.Mappers;
 
 namespace miniprojeto_samsys.API{
     public class Startup
@@ -87,14 +89,16 @@ namespace miniprojeto_samsys.API{
         public void ConfigureMyServices(IServiceCollection services)
         {
 
+
             services.AddTransient<IUnitOfWork,UnitOfWork>();
 
             services.AddTransient<IBookRepository,BookRepository>();
-            services.AddTransient<BookService>();
-
             services.AddTransient<IAuthorRepository,AuthorRepository>();
+
+            services.AddTransient<BookService>();
             services.AddTransient<AuthorService>();
 
+            services.AddAutoMapper(typeof(AutoMapperProfile));
         }
 
         public static void Seed(IApplicationBuilder app)
