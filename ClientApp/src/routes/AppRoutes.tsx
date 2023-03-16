@@ -1,7 +1,7 @@
-import {BookComponent} from '../components/BookComponent';
-import BookList from '../components/BookList';
-import { Counter } from '../components/Counter';
-import { Home } from '../components/Home';
+import {BookComponent} from '../components/OldComponents/BookComponent';
+import BookList from '../components/BookTable/BookList';
+import { Counter } from '../components/OldComponents/Counter';
+import { Home } from '../components/Home/Home';
 
 
 const AppRoutes = [
