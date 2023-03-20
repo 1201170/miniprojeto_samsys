@@ -3,25 +3,33 @@ import { MessagingHelper } from "../helpers/MessagingHelper";
 import { PaginatedList } from "../helpers/PaginatedList";
 import Book from "../models/Book/Book";
 import BookCreationDTO from "../models/Book/BookCreationDTO";
+import { Parameter } from "../models/Parameter";
 import { APIService } from "./APIService";
 
 export class BookService{
 
 
     async GetBooks(
-        pageIndex: number,
-        pageSize: number,
+        searchParameters: Parameter[],
+        sortingParameters: Parameter[],
+        currentPage: number,
+        pageSize: number
     ): Promise<PaginatedList<Book>> {
-        try {
-            var response = await APIService.Axios().get(
-                `${APIService.GetURL()}/book/pageNumber=${pageIndex+1}&pageSize=${pageSize}`,
-                {},
+        try{
+            var response = await APIService.Axios().post(
+                `${APIService.GetURL()}/book/GetAll`,
+                {
+                        currentPage,
+                        pageSize,
+                        searchParameters,
+                        sortingParameters
+                }
             );
             return response.data;
-        } catch (error) {
+        }catch(error) {
             return new PaginatedList<Book>(
                 false,
-                "Erro ao obter a informação dos livros",
+                "Error obtaining book information",
                 "",
                 [],
                 0,

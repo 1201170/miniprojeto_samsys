@@ -8,7 +8,7 @@ class ToastClass {
         toast(message, {
             type,
             theme: "colored",
-            autoClose: 2500,
+            autoClose: 2000,
         });
     }
 }

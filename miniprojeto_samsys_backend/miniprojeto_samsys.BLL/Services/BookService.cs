@@ -11,6 +11,7 @@ using miniprojeto_samsys.Infrastructure.Entities.Books;
 using miniprojeto_samsys.DAL.Repositories.Shared;
 using miniprojeto_samsys.BLL.Mappers;
 using AutoMapper;
+using miniprojeto_samsys.Infrastructure.Models.Search;
 
 namespace miniprojeto_samsys.BLL.Services
 {
@@ -71,32 +72,19 @@ namespace miniprojeto_samsys.BLL.Services
         }
 
 
-        public async Task<PaginatedList<BookDisplayDTO>> GetBooksAsync (BookParameters bookParameters){
+        public async Task<PaginatedList<BookDisplayDTO>> GetBooksAsync (SearchDTO search){
 
             var response = new PaginatedList<BookDisplayDTO>();
             string errorMessage = "Error occurred while obtaining data";
 
 
-            Console.WriteLine("Fetching books parameters are: Page Size: " +bookParameters.PageSize+ " | Page Number: "+ bookParameters.PageNumber);
+            Console.WriteLine("Fetching books parameters are: Page Size: " +search.PageSize+ " | Page Number: "+ search.CurrentPage);
 
             try{
 
-                if (bookParameters.PageSize > 20)
-                {
-                    bookParameters.PageSize = 20;
-                }
+            search.Validate();
 
-                if (bookParameters.PageSize < 5)
-                {
-                    bookParameters.PageSize = 5;
-                }
-
-                if (bookParameters.PageNumber <= 0)
-                {
-                    bookParameters.PageNumber = 1;
-                }
-
-            var responseRepository = await this._repo.GetBooks(bookParameters);
+            var responseRepository = await this._repo.GetBooks(search.SearchParameters, search.SortingParameters, search.CurrentPage, search.PageSize);
 
             if (!responseRepository.Success)
             {
@@ -114,7 +102,6 @@ namespace miniprojeto_samsys.BLL.Services
             response.TotalRecords = responseRepository.TotalRecords;
             response.Success = true;
             return response;
-
 
             } catch (Exception ex){
                 response.Message = errorMessage + ": " + ex;

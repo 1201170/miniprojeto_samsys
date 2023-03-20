@@ -3,8 +3,10 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_Cell,
   MRT_ColumnDef,
+  MRT_ColumnFiltersState,
   MRT_PaginationState,
   MRT_Row,
+  MRT_SortingState,
 } from 'material-react-table';
 import {
   Box,
@@ -27,6 +29,7 @@ import Toast from "../../helpers/Toast";
 import { ToastContainer } from 'react-toastify';
 import BookCreationDTO from '../../models/Book/BookCreationDTO';
 import 'react-toastify/dist/ReactToastify.css';
+import { Parameter } from '../../models/Parameter';
 
 export default function BookList () {
 
@@ -43,6 +46,13 @@ export default function BookList () {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
   const [actionFlick, setActionFlick] = useState(false);
+
+  //table state
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
+    [],
+  );
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);  
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -58,7 +68,29 @@ export default function BookList () {
           setIsRefetching(true);
         }
 
-          var response = await bookService.GetBooks(pagination.pageIndex, pagination.pageSize);
+          let filterParameters : Parameter[] = [];
+
+          columnFilters.forEach(
+            function(value) {
+              var par = new Parameter(value.id, value.value);
+              filterParameters.push(par);
+            }
+          )
+
+          let sortingParameters : Parameter[] = [];
+
+          sorting.forEach(
+            function(value) {
+              var sortingOrder = "DESC";
+              if(!value.desc){
+                sortingOrder = "ASC";
+              }
+              var par = new Parameter(value.id, sortingOrder);
+              sortingParameters.push(par);
+            }
+          )
+
+          var response = await bookService.GetBooks(filterParameters,sortingParameters,pagination.pageIndex+1, pagination.pageSize);
 
           if (response.success === false) {
             setIsLoading(false);
@@ -76,7 +108,14 @@ export default function BookList () {
         setIsRefetching(false);  
       };
       api();
-  }, [pagination.pageIndex,pagination.pageSize, actionFlick]);
+  }, [
+    pagination.pageIndex,
+    pagination.pageSize, 
+    actionFlick,
+    columnFilters,
+    globalFilter,
+    sorting
+  ]);
 
 
 
@@ -243,14 +282,22 @@ export default function BookList () {
         enableColumnOrdering
         enableEditing
         enablePagination={true}
+
+        manualFiltering
         manualPagination
+        manualSorting
+
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
         muiTablePaginationProps={{
           rowsPerPageOptions: [5, 10, 20],
         }}
+
+        onColumnFiltersChange={setColumnFilters}
+        onGlobalFilterChange={setGlobalFilter}
         onPaginationChange={setPagination}
-      
+        onSortingChange={setSorting}
+        
         muiToolbarAlertBannerProps={
           isError
             ? {
@@ -284,10 +331,13 @@ export default function BookList () {
         )}
         rowCount={rowCount}
         state={{
+          columnFilters,
+          globalFilter,  
           isLoading,
           pagination,
           showAlertBanner: isError,
           showProgressBars: isRefetching,
+          sorting,
         }}  
       />
       <BookCreationModal

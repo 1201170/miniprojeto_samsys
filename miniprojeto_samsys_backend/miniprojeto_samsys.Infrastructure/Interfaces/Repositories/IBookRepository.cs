@@ -12,7 +12,7 @@ namespace miniprojeto_samsys.Infrastructure.Interfaces.Repositories
         Task<MessagingHelper<List<Book>>> GetAllBooksAsync();
         Task<MessagingHelper<Book>> GetBookByIdAsync(BookIsbn id, bool includeAuthor = false);
         Task<MessagingHelper<List<Book>>> GetByNameAsync(String bookName);
-        Task<PaginatedList<Book>> GetBooks(BookParameters bookParameters);
+        Task<PaginatedList<Book>> GetBooks(List<Parameter> filterParameters, List<Parameter> sortingParameters,int currentPage, int pageSize);
         void SoftDeleteBook(Book book);
         Task<int> GetBooksTotalCount();
 

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using miniprojeto_samsys.Infrastructure.Entities.Books;
 using miniprojeto_samsys.Infrastructure.Helpers;
 using miniprojeto_samsys.Infrastructure.Models.Books;
+using miniprojeto_samsys.Infrastructure.Models.Search;
 
 namespace miniprojeto_samsys.Infrastructure.Interfaces.Services{
 
@@ -11,7 +12,7 @@ namespace miniprojeto_samsys.Infrastructure.Interfaces.Services{
 
         Task<MessagingHelper<List<BookDTO>>> GetAllAsync ();
 
-        Task<PaginatedList<BookDisplayDTO>> GetBooksAsync (BookParameters bookParameters);
+        Task<PaginatedList<BookDisplayDTO>> GetBooksAsync (SearchDTO search);
 
         Task<MessagingHelper<BookDTO>> GetByIdAsync (BookIsbn id);
 

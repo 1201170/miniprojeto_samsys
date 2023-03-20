@@ -7,6 +7,7 @@ using miniprojeto_samsys.BLL.Services;
 using miniprojeto_samsys.Infrastructure.Helpers;
 using miniprojeto_samsys.Infrastructure.Models.Books;
 using miniprojeto_samsys.Infrastructure.Entities.Books;
+using miniprojeto_samsys.Infrastructure.Models.Search;
 
 namespace miniprojeto_samsys.API.Controllers
 {
@@ -35,12 +36,10 @@ namespace miniprojeto_samsys.API.Controllers
             return await _service.GetByIdAsync(new BookIsbn(id));
         }
 
-        [HttpGet("pageNumber={pageNumber}&pageSize={pageSize}")]
-        public async Task<PaginatedList<BookDisplayDTO>> GetBooks(int pageNumber, int pageSize)
+        [HttpPost("GetAll")]
+        public async Task<PaginatedList<BookDisplayDTO>> GetBooks(SearchDTO search)
         {
-            BookParameters bookParameters = new BookParameters(pageNumber, pageSize);
-
-            var books = await _service.GetBooksAsync(bookParameters);
+            var books = await _service.GetBooksAsync(search);
 
             Console.WriteLine("Rows fetched: "+books.TotalRecords);
 
